@@ -401,6 +401,8 @@ already in hand.  Effort: ~4 trace steps, 3 lines of code.
 #guard sumTo 10 = 55
 ```
 
+-- DID NOT HAVE TIME
+
 ---
 
 **[E3.2]** · *specification writing* · tier 1 (+ tier-3 reading) · **core** · target `SumToClosedForm`
@@ -419,6 +421,8 @@ Instead confirm the spec on instances and on one bounded, decidable slice:
 In one line: which tier does the *general* `∀ n : Nat` statement live in, and which the
 three checks?
 
+-- DID NOT HAVE TIME
+
 ---
 
 **[E3.3]** · *counterexample finding* · tier 1 · **core**
@@ -435,6 +439,8 @@ the check **succeeds** (it confirms the two sides differ):
 *First-step hint:* evaluate `sumTo 3` and `3 * 3 / 2` by hand and compare.  Then state, in
 one line, the *single edit* to the student's formula that makes it correct (compare with
 the spec in E3.2).
+
+-- DID NOT HAVE TIME
 
 ---
 
@@ -455,6 +461,9 @@ For each claim, say **whether `decide` (equivalently an `rfl`-test) can close it
 --     (hint for (b): §3.4 — gcd is well-founded, so the kernel cannot reduce it;
 --      for (d): the domain of n is infinite).
 ```
+
+-- DID NOT HAVE TIME
+
 
 ---
 

@@ -270,6 +270,10 @@ the two?).  This previews the free theorems of Week 7 (§7.2).  No code to submi
 
 ---
 
+Nat.add adds two natural numbers together, so it takes two arguments.  It is curried.
+Nat.mul multiplies two natural numbers together, taking two arguments.  It is curried.
+String.append adds one string to another, taking two arguments.  It is curried.
+
 **[E1.2]** · *specification writing* · tier 1 · **core** · target `myStrNat`
 
 Define a product type pairing a `String` with a `Nat`, and a value

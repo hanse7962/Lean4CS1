@@ -519,7 +519,10 @@ alone is graded.)
 forced (`→I`); then eliminate the hypothesis (`×E`) before building the swapped pair
 (`×I`).
 
+-- DID NOT HAVE TIME
+
 ---
+
 
 **[E2.7]** · *type-directed derivation* · tier 2 · **stretch** · target `curry`
 
@@ -534,6 +537,8 @@ Effort: ~4 trace steps.
 
 *First-step hint:* the goal is an arrow into an arrow into an arrow — introduce all three
 arguments (`f`, `a`, `b`) before you can build the `A × B` pair to feed `f`.
+
+-- DID NOT HAVE TIME
 
 ---
 
@@ -551,6 +556,8 @@ either function, and why.  Effort: ~4 trace steps.
 *First-step hint:* after `→I` on the two functions and the sum, the sum's side is
 unknown — `⊕E` (`match`) must come before you can apply `f` or `g`.
 
+<DID NOT HAVE TIME TO COMPLETE>
+
 ---
 
 **[E2.9]** · *type-directed derivation · type reading (free theorems)* · tier 2 · **stretch**
@@ -561,9 +568,15 @@ to submit:
 (a) **Method:** which introduction- or elimination-step must come **first**, and which
 hypothesis closes the final goal?
 
+-- DID NOT HAVE TIME
+
+
 (b) **Free theorem (previewing Week 7 §7.2):** reading only the type, how many inhabitants
 does it have when `A B C` are fully polymorphic, and why can the code not *invent* a `C`?
 This is the inverse of (a): where the derivation is forced, the reading is total.
 @@@ -/
+
+-- DID NOT HAVE TIME
+
 
 end Week02

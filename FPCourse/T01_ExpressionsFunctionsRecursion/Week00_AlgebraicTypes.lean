@@ -798,9 +798,21 @@ check it.  The judgment is the point, not the tool-use:
 (a) `2 < 3 ∧ 3 < 4`   (b) `2 < 3 ∨ 3 < 2`   (c) `¬ (2 = 3)`   (d) `¬ (2 < 3 ∧ 3 < 2)`
 
 ```lean
+#a) Yes, since both conditions are true and the domain is finite.
+# 'decide' uses the "AND" constructor for the proposition.
 #guard decide (2 < 3 ∧ 3 < 4) = true
+
+#b) Yes, the left condition evaluates to true under a finite domain.
+# 'decide' uses the "OR" constructor for the proposition.
 #guard decide (2 < 3 ∨ 3 < 2) = true
+
+#c) Yes, the internal proposition (evaluates to false) is negated, which then
+# evaluates to true.  'decide' uses the Function to empty (negation) constructor.
 #guard decide (¬ (2 = 3)) = true
+
+# d) Yes, the internal proposition evaluates to false, which is then negated
+# and evaluates to true.  'decide" can close it because of a finite domain, and
+# both the "AND" and "Function to Empty" constructors are used.
 #guard decide (¬ (2 < 3 ∧ 3 < 2)) = true
 ```
 
@@ -818,6 +830,9 @@ twice introduces `f : α → α` and `x : α`; the only way to reach the goal `�
 `f`, and applying it once leaves another `α` to feed back in.  Effort: ~3 trace steps,
 2 lines of code.
 
+def twice : a → a → a
+fun fun a x => f (a x)
+
 ```lean
 #guard twice (· * 2) 3 = 12
 #guard twice (fun b => !b) false = false
@@ -834,6 +849,11 @@ Build `mapOption : (α → β) → Option α → Option β` with a `match`: appl
 pass `none` through.  State its spec in one line — *"`some a ↦ some (f a)`, and `none ↦ none`"* —
 then confirm on instances.  Which **two** of the six constructors does the *type* of
 `mapOption` use?  Effort: one `match`, ~3 lines.
+
+match s with:
+  some a -> some (f a)
+  empty -> empty
+
 
 ```lean
 #guard mapOption (· * 2) (some 5) = some 10
