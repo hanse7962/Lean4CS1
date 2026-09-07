@@ -4,7 +4,7 @@ import Mathlib.Data.Bool.Basic
 import Mathlib.Logic.Basic
 
 /-! @@@
-# Week 1: Expressions, Types, and Values
+# Expressions, Types, and Values
 
 ## The central idea of this course
 

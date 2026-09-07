@@ -4,7 +4,7 @@ import Mathlib.Data.Nat.Basic
 import Mathlib.Tactic.Ring
 ```
 
-# Week 3: Recursion and Termination
+# Recursion and Termination
 
 ## Structural recursion
 
@@ -510,5 +510,5 @@ h✝ : (n % 2 == 0) = true
 collatz : ℕ → ℕ
 ```
 
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+<div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

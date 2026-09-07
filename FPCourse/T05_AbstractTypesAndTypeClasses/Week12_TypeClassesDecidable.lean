@@ -3,7 +3,7 @@ import Mathlib.Data.List.Basic
 import Mathlib.Logic.Basic
 
 /-! @@@
-# Week 12: Type Classes and the Decidable Type
+# Type Classes and the Decidable Type
 
 ## What a type class really is
 

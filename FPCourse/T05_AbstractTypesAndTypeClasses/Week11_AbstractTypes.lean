@@ -3,7 +3,7 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.Option.Basic
 
 /-! @@@
-# Week 11: Abstract Types
+# Abstract Types
 
 ## Abstraction via type classes
 

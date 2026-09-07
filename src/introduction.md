@@ -18,6 +18,14 @@ theory and the theory of relations. **Part II shifts to proof construction itsel
 directly on those foundations. This web page is
 mirrored, modulo updates, by the Lean 4 project at [kevinsullivan/Lean4CS1](https://github.com/kevinsullivan/Lean4CS1).
 
+## Why Lean, as of Fall 2026
+
+There is exploding interest in the use of Lean for both formal mathematics and formal software
+specification and verification. Two companion pages record where that stood at the start of this
+semester: a [snapshot of fifteen organizations](./lean4-fall-2026.html) working in Lean beyond
+research, and [the thirty sources](./lean4-fall-2026-sources.html) behind every figure and claim
+in it.
+
 ## Design Commitments
 
 Students should emerge fluent in computational and logical types.

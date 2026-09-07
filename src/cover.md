@@ -96,7 +96,9 @@
   .cover-cta { transition: none; }
 }
 .cover-status {
-  margin-top: 0.9rem;
+  /* Matches .cover-cta's margin-top so the button is centred between the
+     line above it and this one. */
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -113,14 +115,14 @@
   <div class="cover-plate">
     <div class="cover-kicker">University of Virginia</div>
     <div class="cover-title">Software Logic</div>
-    <div class="cover-subtitle">Intellectual Control for Quality and Accountability</div>
-    <div class="cover-subtitle-2">In the Era of AI and Autoformalization</div>
+    <div class="cover-subtitle">Intellectual Control, Assurance, and Accountability</div>
+    <div class="cover-subtitle-2">in the Era of Agentic Software Engineering and Autoformalized Mathematics</div>
     <div class="cover-rule"></div>
     <div class="cover-author">Kevin Sullivan</div>
     <div class="cover-affiliation">Department of Computer Science</div>
     <div class="cover-affiliation">CS6501-010 &middot; Fall 2026</div>
     <div class="cover-mark">theorem correct : &forall; n, f n = spec n := by decide</div>
-    <div><a class="cover-cta" href="setup.html">Let&rsquo;s Go!</a></div>
-    <div class="cover-status">Living edition &middot; revised through the semester &middot; <span class="cover-commit">@GIT_COMMIT@</span></div>
+    <div><a class="cover-cta" href="setup.html">Boot!</a></div>
+    <div class="cover-status">Semper crescens &middot; Commit <span class="cover-commit">@GIT_COMMIT@</span></div>
   </div>
 </div>

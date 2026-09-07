@@ -11,6 +11,7 @@ build-dir = "book"
 [output.html]
 mathjax-support = true
 git-repository-url = "https://github.com/kevinsullivan/Lean4CS1"
+additional-css = ["issue-box.css"]
 additional-js = ["mermaid.min.js", "mermaid-init.js"]
 
 [output.html.print]
@@ -22,4 +23,8 @@ renderer = ["html"]
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
+renderer = ["html"]
+
+[preprocessor.stamp]
+command = "python3 scripts/stamp_commit.py"
 renderer = ["html"]

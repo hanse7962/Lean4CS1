@@ -32,8 +32,8 @@ jobs:
       - uses: actions/checkout@v4
 
       # Installs elan and the toolchain named in lean-toolchain, restores the
-      # Mathlib olean cache, then runs `lake build` on the default targets
-      # (Overview and FPCourse).
+      # Mathlib olean cache, then runs `lake build` on the default target
+      # (FPCourse).
       - uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true

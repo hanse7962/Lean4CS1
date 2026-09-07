@@ -3,7 +3,7 @@ import Mathlib.Data.Option.Basic
 import Mathlib.Logic.Basic
 
 /-! @@@
-# Week 4: Algebraic Datatypes
+# Algebraic Datatypes
 
 ## Sum types and product types
 

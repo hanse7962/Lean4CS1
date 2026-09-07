@@ -4,7 +4,7 @@ import Mathlib.Data.List.Basic
 import Mathlib.Logic.Basic
 ```
 
-# Week 14: The Curry-Howard Correspondence
+# The Curry-Howard Correspondence
 
 ## Naming what you already know
 
@@ -472,5 +472,5 @@ end Week14
 ```
 
 
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+<div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

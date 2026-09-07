@@ -1,0 +1,27 @@
+/* The "Report an issue" box that closes every generated chapter.
+   Colors come from mdBook's theme variables rather than fixed hex values, so
+   the box follows light / rust / coal / navy / ayu -- and the Auto setting's
+   OS-level flip -- the way the cover plate does.  These were previously inline
+   styles baked into each generated .md by scripts/convert.py; an inline style
+   cannot see the theme class mdBook stamps on <html>, so the box stayed
+   paper-white, with unreadable text, on every dark theme. */
+.issue-box {
+  background: var(--quote-bg);
+  border: 1px solid var(--quote-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 16px;
+  font-size: 0.9em;
+}
+
+/* The link takes the body foreground rather than var(--links).  Against the
+   quote tint, rust's link blue lands at 2.7:1 -- under the 4.5:1 that
+   ACCESSIBILITY.md commits to -- and the same holds for any link mdBook puts
+   in a blockquote.  Underlining carries the affordance instead of hue.
+   The :link/:visited pair is needed to match the specificity of mdBook's own
+   `.content a:link` rule, which a plain `.issue-box a` loses to. */
+.issue-box a:link,
+.issue-box a:visited {
+  color: var(--fg);
+  text-decoration: underline;
+}

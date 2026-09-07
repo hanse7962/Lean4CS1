@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lean 4, Fall 2026 — Sources</title>
+<style>
+  @font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 400; font-display: swap;
+    src: url('webfonts/ibm-plex-sans-400-normal-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 400; font-display: swap;
+    src: url('webfonts/ibm-plex-sans-400-normal-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 500; font-display: swap;
+    src: url('webfonts/ibm-plex-sans-400-normal-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 500; font-display: swap;
+    src: url('webfonts/ibm-plex-sans-400-normal-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 600; font-display: swap;
+    src: url('webfonts/ibm-plex-sans-400-normal-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 600; font-display: swap;
+    src: url('webfonts/ibm-plex-sans-400-normal-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Spectral'; font-style: italic; font-weight: 400; font-display: swap;
+    src: url('webfonts/spectral-400-italic-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Spectral'; font-style: italic; font-weight: 400; font-display: swap;
+    src: url('webfonts/spectral-400-italic-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Spectral'; font-style: normal; font-weight: 400; font-display: swap;
+    src: url('webfonts/spectral-400-normal-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Spectral'; font-style: normal; font-weight: 400; font-display: swap;
+    src: url('webfonts/spectral-400-normal-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Spectral'; font-style: normal; font-weight: 600; font-display: swap;
+    src: url('webfonts/spectral-600-normal-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Spectral'; font-style: normal; font-weight: 600; font-display: swap;
+    src: url('webfonts/spectral-600-normal-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+  :root {
+    --paper:  #f8f9fc;
+    --ink:    #14161d;
+    --muted:  #5b6379;
+    --faint:  #6b7284;
+    --rule:   #dde1ea;
+    --accent: #3547a8;
+    --serif: "Spectral", Georgia, serif;
+    --sans:  "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #101219; --ink: #e7eaf3; --muted: #9aa2b8;
+      --faint: #767e94; --rule: #272c3a; --accent: #93a4f2;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #101219; --ink: #e7eaf3; --muted: #9aa2b8;
+    --faint: #767e94; --rule: #272c3a; --accent: #93a4f2;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans);
+    line-height: 1.55; }
+
+  .doc { max-width: 42rem; margin: 0 auto;
+    padding: clamp(1.75rem, 6vw, 3.5rem) clamp(1.15rem, 5vw, 2rem) 4rem;
+    display: flex; flex-direction: column; gap: 2.25rem; }
+
+  header { display: flex; flex-direction: column; gap: .35rem;
+    border-bottom: 1px solid var(--ink); padding-bottom: .9rem; }
+  h1 { margin: 0; font-family: var(--serif); font-weight: 600;
+    font-size: clamp(1.9rem, 7vw, 2.5rem); line-height: 1.08;
+    letter-spacing: -.01em; text-wrap: balance; }
+  .byline { margin: 0; font-size: .82rem; color: var(--muted); }
+
+  .note { margin: 0; font-family: var(--serif);
+    font-size: clamp(1.02rem, 3.2vw, 1.1rem); line-height: 1.65; }
+
+  section { display: flex; flex-direction: column; gap: 1.15rem; }
+  h2 { margin: 0; font-size: .74rem; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--accent); }
+
+  .entry { display: flex; flex-direction: column; gap: .2rem;
+    padding-bottom: 1.1rem; border-bottom: 1px solid var(--rule); }
+  .entry:last-of-type { border-bottom: 0; padding-bottom: 0; }
+  .line { display: flex; flex-wrap: wrap; align-items: baseline;
+    justify-content: space-between; gap: .3rem 1rem; }
+  .name { font-weight: 600; font-size: 1.02rem; }
+  .val { font-size: .92rem; color: var(--ink);
+    font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tag { display: block; font-size: .74rem; font-style: italic;
+    color: var(--faint); white-space: nowrap; }
+  .act { margin: 0; font-size: .92rem; color: var(--muted); line-height: 1.5; }
+  .act strong { color: var(--ink); font-weight: 600; }
+
+  sup a { font-size: .62em; color: var(--accent); text-decoration: none;
+    padding: 0 .08em; }
+  sup a:hover, sup a:focus-visible { text-decoration: underline; }
+
+  .foot { margin: 0; font-size: .8rem; color: var(--faint); line-height: 1.5; }
+
+  .bib { display: flex; flex-direction: column; gap: .55rem;
+    font-size: .78rem; color: var(--muted); }
+  .bib div { padding-left: 1.9rem; text-indent: -1.9rem; line-height: 1.45; }
+  .bib b { font-weight: 500; color: var(--accent);
+    display: inline-block; width: 1.7rem; text-indent: 0; }
+  .bib a { color: var(--ink); text-decoration: none;
+    border-bottom: 1px solid var(--rule); overflow-wrap: anywhere; }
+  .bib a:hover, .bib a:focus-visible { color: var(--accent);
+    border-bottom-color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .qed { color: var(--accent); }
+  .skip { position: absolute; left: -9999px; top: 0; background: var(--paper);
+    color: var(--accent); padding: .6rem 1rem; z-index: 10;
+    border: 2px solid var(--accent); border-radius: 0 0 3px 0; }
+  .skip:focus { left: 0; }
+  .more { color: var(--accent); text-decoration: none;
+    border-bottom: 1px solid currentColor; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<main id="main" class="doc">
+
+  <header>
+    <h1>Sources</h1>
+    <p class="byline"><a class="more" href="lean4-fall-2026.html"><span aria-hidden="true">&larr; </span>Lean 4, Fall 2026</a></p>
+  </header>
+
+  <p class="foot">Each citation was retrieved and read against the claim it supports, not merely
+  checked for a live URL. Figures are quoted from the cited page. Where a claim and a source
+  parted company, the claim was cut or re-sourced rather than kept. Retrieved 2 September 2026.</p>
+
+    <div class="bib">
+      <div id="s1"><b>1</b>StockAnalysis. &ldquo;Alphabet (GOOGL) Market Cap.&rdquo; Retrieved 2 September 2026. <a href="https://stockanalysis.com/stocks/googl/market-cap/">stockanalysis.com/stocks/googl/market-cap</a></div>
+      <div id="s2"><b>2</b>StockAnalysis. &ldquo;Microsoft (MSFT) Market Cap.&rdquo; Retrieved 2 September 2026. <a href="https://stockanalysis.com/stocks/msft/market-cap/">stockanalysis.com/stocks/msft/market-cap</a></div>
+      <div id="s3"><b>3</b>StockAnalysis. &ldquo;Amazon (AMZN) Market Cap.&rdquo; Retrieved 2 September 2026. <a href="https://stockanalysis.com/stocks/amzn/market-cap/">stockanalysis.com/stocks/amzn/market-cap</a></div>
+      <div id="s4"><b>4</b>Anthropic. &ldquo;Anthropic raises $65B in Series H funding at $965B post-money valuation.&rdquo; 28 May 2026. <a href="https://www.anthropic.com/news/series-h">anthropic.com/news/series-h</a></div>
+      <div id="s5"><b>5</b>Bellan, Rebecca. &ldquo;OpenAI, not yet public, raises $3B from retail investors in monster $122B fund raise.&rdquo; <em>TechCrunch</em>, 31 March 2026. <a href="https://techcrunch.com/2026/03/31/openai-not-yet-public-raises-3b-from-retail-investors-in-monster-122b-fund-raise/">techcrunch.com</a></div>
+      <div id="s6"><b>6</b>Feng, Coco. &ldquo;ByteDance valuation surges to record high of over US$600b on proposed equity sale: sources.&rdquo; <em>South China Morning Post</em>, 8 April 2026. <a href="https://www.scmp.com/tech/big-tech/article/3349337/bytedance-valuation-surges-record-high-over-us600b-proposed-equity-sale-sources">scmp.com</a></div>
+      <div id="s7"><b>7</b>StockAnalysis. &ldquo;Tencent Holdings (HKG:0700).&rdquo; Retrieved 2 September 2026: price HKD 438.20, shares outstanding 9.00B, market cap HKD 3.94T. Corroborated by the USD listing at $502.9B. <a href="https://stockanalysis.com/quote/hkg/0700/">stockanalysis.com/quote/hkg/0700</a></div>
+      <div id="s8"><b>8</b>PYMNTS. &ldquo;DeepSeek Resumes Funding Round to Raise $8 Billion.&rdquo; 6 August 2026. Round ongoing. <a href="https://www.pymnts.com/news/artificial-intelligence/2026/deepseek-resumes-funding-round-to-raise-8-billion/">pymnts.com</a></div>
+      <div id="s9"><b>9</b>KrASIA. &ldquo;Moonshot AI targets August 27 closing for pre-IPO round ahead of Hong Kong filing.&rdquo; 11 August 2026. <a href="https://kr-asia.com/moonshot-ai-targets-august-27-closing-for-pre-ipo-round-ahead-of-hong-kong-filing">kr-asia.com</a></div>
+      <div id="s10"><b>10</b>Iyer, Ram. &ldquo;Mistral is rumored to be raising &euro;3B at &euro;20B valuation.&rdquo; <em>TechCrunch</em>, 12 June 2026. &euro;20B &asymp; $23.15B. <a href="https://techcrunch.com/2026/06/12/mistral-is-rumored-to-be-raising-e3b-at-e20-valuation/">techcrunch.com</a></div>
+      <div id="s11"><b>11</b>Riley, Duncan. &ldquo;Harmonic AI raises $120M at $1.45B valuation to advance mathematical reasoning.&rdquo; <em>SiliconANGLE</em>, 25 November 2025. <a href="https://siliconangle.com/2025/11/25/harmonic-ai-raises-120m-1-45b-valuation-advance-mathematical-reasoning/">siliconangle.com</a></div>
+      <div id="s12"><b>12</b>Hubert, Thomas, Rishi S. Mehta, Laurent Sartran, et al. &ldquo;Olympiad-level formal mathematical reasoning with reinforcement learning.&rdquo; <em>Nature</em>, 12 November 2025. DOI <a href="https://doi.org/10.1038/s41586-025-09833-y">10.1038/s41586-025-09833-y</a>; PMID 41225005</div>
+      <div id="s13"><b>13</b>Ho, Son, C&eacute;dric Fournet, Antoine Delignat-Lavaud, Samuel Lee, Jason Fisher and Jessica Krynitsky. &ldquo;Verifying Rust cryptography in SymCrypt, from standards to code.&rdquo; <em>Microsoft Research Blog</em>, 13 July 2026. <a href="https://www.microsoft.com/en-us/research/blog/verifying-rust-cryptography-in-symcrypt-from-standards-to-code/">microsoft.com/en-us/research</a></div>
+      <div id="s14"><b>14</b>Hietala, Kesha and Emina Torlak. &ldquo;Lean Into Verified Software Development.&rdquo; <em>AWS Open Source Blog</em>, 8 April 2024. <a href="https://aws.amazon.com/blogs/opensource/lean-into-verified-software-development/">aws.amazon.com/blogs/opensource</a></div>
+      <div id="s15"><b>15</b>Disselkoen, Craig, Aaron Eline, Shaobo He, et al. &ldquo;How We Built Cedar: A Verification-Guided Approach.&rdquo; arXiv:2407.01688 [cs.SE], 1 July 2024. <a href="https://arxiv.org/abs/2407.01688">arxiv.org/abs/2407.01688</a></div>
+      <div id="s16"><b>16</b>Anthropic. &ldquo;Learning more about Claude&rsquo;s mathematical capabilities.&rdquo; 10 August 2026. <a href="https://www.anthropic.com/research/riemann-zeta">anthropic.com/research/riemann-zeta</a></div>
+      <div id="s17"><b>17</b>OpenAI. &ldquo;ten-proofs: Lean certificates accompanying ten proofs in mathematics and theoretical computer science.&rdquo; GitHub. <a href="https://github.com/openai/ten-proofs">github.com/openai/ten-proofs</a></div>
+      <div id="s18"><b>18</b>ByteDance Seed. &ldquo;Seed Research | New SOTA in Formal Mathematical Reasoning! BFS-Prover Model Now Open Sourced.&rdquo; 25 February 2025. <a href="https://seed.bytedance.com/en/blog/seed-research-new-sota-in-formal-mathematical-reasoning-bfs-prover-model-now-open-sourced">seed.bytedance.com</a></div>
+      <div id="s19"><b>19</b>Li, Yang, Dong Du, Linfeng Song, Chen Li, Weikang Wang, Tao Yang and Haitao Mi. &ldquo;HunyuanProver.&rdquo; arXiv:2412.20735, 30 December 2024. <a href="https://arxiv.org/abs/2412.20735">arxiv.org/abs/2412.20735</a></div>
+      <div id="s20"><b>20</b>Ren, Z. Z., Zhihong Shao, Junxiao Song, et al. &ldquo;DeepSeek-Prover-V2.&rdquo; arXiv:2504.21801, 30 April 2025 (rev. 18 July 2025). <a href="https://arxiv.org/abs/2504.21801">arxiv.org/abs/2504.21801</a></div>
+      <div id="s21"><b>21</b>Project Numina and Kimi. &ldquo;Kimina-Prover-72B&rdquo; model card. Hugging Face. <a href="https://huggingface.co/AI-MO/Kimina-Prover-72B">huggingface.co/AI-MO/Kimina-Prover-72B</a></div>
+      <div id="s22"><b>22</b>Mistral AI. &ldquo;Leanstral: Open-Source foundation for trustworthy vibe-coding.&rdquo; 16 March 2026. <a href="https://mistral.ai/news/leanstral/">mistral.ai/news/leanstral</a></div>
+      <div id="s23"><b>23</b>Harmonic (Business Wire). &ldquo;Harmonic Announces IMO Gold Medal-Level Performance.&rdquo; 28 July 2025. <a href="https://finance.yahoo.com/news/harmonic-announces-imo-gold-medal-224200822.html">finance.yahoo.com</a></div>
+      <div id="s24"><b>24</b>Math, Inc. &ldquo;Introducing Gauss, an agent for autoformalization.&rdquo; <a href="https://www.math.inc/gauss">math.inc/gauss</a></div>
+      <div id="s25"><b>25</b>Math, Inc. &ldquo;OpenGauss: an open source, state of the art autoformalization harness.&rdquo; <a href="https://www.math.inc/opengauss">math.inc/opengauss</a>; source at <a href="https://github.com/math-inc/OpenGauss">github.com/math-inc/OpenGauss</a> (MIT)</div>
+      <div id="s26"><b>26</b>Yu, Xuejun, Jianyuan Zhong, Zijin Feng, et al. &ldquo;Mathesis: Towards Formal Theorem Proving from Natural Languages.&rdquo; arXiv:2506.07047, 8 June 2025. <a href="https://arxiv.org/abs/2506.07047">arxiv.org/abs/2506.07047</a>; code at <a href="https://github.com/Huawei-AI4Math/Mathesis">github.com/Huawei-AI4Math/Mathesis</a></div>
+      <div id="s27"><b>27</b>Nethermind Security, Formal Verification Team. &ldquo;How We Formalized Ethereum Execution: A Trustworthy Semantics of the EVM and Yul in Lean for Cancun.&rdquo; 6 February 2026. <a href="https://www.nethermind.io/blog/a-trustworthy-formal-model-of-evm-yul-in-lean">nethermind.io/blog</a></div>
+      <div id="s28"><b>28</b>Nethermind Security, Formal Verification Team. &ldquo;Formal Verification of Halo2 Circuits in Lean.&rdquo; 2 July 2025. <a href="https://www.nethermind.io/blog/formal-verification-of-halo2-circuits-in-lean">nethermind.io/blog</a></div>
+      <div id="s29"><b>29</b>Dougherty, Quinn, Max von Hippel, Simon Henniger, Hazel Shackleton and Mike Dodds. &ldquo;FVSpec: Real-World Property-Based Tests as Lean Challenges.&rdquo; arXiv:2606.01008, 31 May 2026 (rev. 17 August 2026). <a href="https://arxiv.org/abs/2606.01008">arxiv.org/abs/2606.01008</a></div>
+      <div id="s30"><b>30</b>Galois, Inc. &ldquo;fvspec: Benchmark suite for helping evaluate how AIs perform on formal verification related tasks.&rdquo; GitHub. <a href="https://github.com/GaloisInc/fvspec">github.com/GaloisInc/fvspec</a></div>
+    </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,33 @@
+// Markdown linting for this book.
+//
+// The VS Code markdownlint extension reads this file directly, and
+// markdownlint-cli2 — the same engine — reads it for scripts and CI, so the
+// editor and the command line agree.
+{
+  "config": {
+    "default": true,
+
+    // Prose in this repository is hand-wrapped at roughly 76 columns, but
+    // tables, links and quoted commands legitimately run past 80. Left on,
+    // MD013 reports about 1,500 violations and drowns everything else.
+    "MD013": false,
+
+    // The syllabus and schedule tables use <br> to break cells; the snapshot
+    // pages use <div>, <a> and <span>; cover.md carries a <style> block.
+    // Everything else stays flagged.
+    "MD033": { "allowed_elements": ["br", "div", "a", "span", "b", "style"] },
+
+    // Chapters generated from Lean sources do not open with an H1.
+    "MD041": false
+  },
+
+  // Generated or vendored. src/FPCourse is written by scripts/convert.py from
+  // the .lean sources, and book/ is mdBook output; linting either reports on
+  // text no one edits by hand.
+  "ignores": [
+    "book/**",
+    "src/FPCourse/**",
+    ".lake/**",
+    "Readings/**"
+  ]
+}

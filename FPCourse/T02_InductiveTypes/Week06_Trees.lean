@@ -3,7 +3,7 @@ import Mathlib.Data.List.Sort
 import Mathlib.Order.Basic
 
 /-! @@@
-# Week 6: Trees and BST Invariants
+# Trees and BST Invariants
 
 ## Binary trees
 

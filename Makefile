@@ -1,11 +1,11 @@
-# Source and target directories
-SRC_DIRS := Overview FPCourse
+# Source and target directories.  Overview/ was removed in bc8a745; listing a
+# directory that no longer exists made `find` error on every make invocation.
+SRC_DIRS := FPCourse
 
-# Commit the book was built from.  src/cover.md carries the literal token
-# @GIT_COMMIT@; `stamp` rewrites it in the *built* HTML, so the source file
-# stays clean and no commit has to contain its own hash.
-GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
-GIT_DIRTY  := $(shell git diff --quiet HEAD 2>/dev/null || echo -dirty)
+# The cover's @GIT_COMMIT@ token is substituted by the stamp preprocessor
+# (scripts/stamp_commit.py, registered in book.toml), so every build mdBook
+# runs -- `mdbook serve` rebuilds included -- gets it right without help from
+# this Makefile.  Set BOOK_COMMIT to override what it stamps.
 
 # Find all source files recursively across all source directories
 SRC_FILES := $(shell find $(SRC_DIRS) -type f -name '*.lean')
@@ -15,11 +15,12 @@ BUILD_FILES := $(patsubst %.lean,src/%.md,$(SRC_FILES))
 # Default target: convert all .lean files to .md, then build the book
 all: $(BUILD_FILES)
 	mdbook build
-	@$(MAKE) --no-print-directory stamp
 	@$(MAKE) --no-print-directory canvas
 
-# Rule: .lean → src/%.md
-$(BUILD_FILES): src/%.md: %.lean
+# Rule: .lean → src/%.md.  The converter is a prerequisite too: it decides the
+# markup around every page (the closing "Report an issue" box, for one), so a
+# change to it has to re-run over sources that are themselves unchanged.
+$(BUILD_FILES): src/%.md: %.lean scripts/convert.py
 	@mkdir -p $(dir $@)
 	echo "Converting $< into $@"
 	python3 scripts/convert.py $< $@
@@ -30,12 +31,29 @@ convert: $(BUILD_FILES)
 # Build the book (assumes convert has been run)
 build:
 	mdbook build
-	@$(MAKE) --no-print-directory stamp
 
-# Stamp the built cover with the commit the book was built from
-stamp:
-	@sed -i 's/@GIT_COMMIT@/$(GIT_COMMIT)$(GIT_DIRTY)/' book/cover.html
-	@echo "Stamped book/cover.html with $(GIT_COMMIT)$(GIT_DIRTY)"
+# Regenerate the Slack copy-paste page from the Slack text
+slack:
+	@python3 scripts/make_slack_html.py
+
+# Regenerate the link-preview image from the built cover
+og: build
+	@python3 scripts/make_og_card.py
+
+# Serve the Slack copy-paste page locally.  It is deliberately not part of the
+# book -- it is working material, not course material -- so it is served on its
+# own port.  Open the forwarded address, select the content, copy, paste into
+# Slack: the tables and the clickable source numbers both survive.
+slack-serve: slack
+	@echo "Open http://localhost:8080/lean4-fall-2026-slack.html (see the PORTS panel)"
+	@python3 -m http.server 8080 --bind 0.0.0.0
+
+# Accessibility gate over the built book.  Pages authored here must pass
+# WCAG 2.1 AA and Section 508; mdBook's own pages are reported but do not fail
+# the build, since their violations come from the upstream theme.  Needs
+# playwright: pip install playwright && python3 -m playwright install --with-deps chromium
+a11y: build
+	@python3 scripts/a11y_check.py book
 
 # Regenerate the Canvas-pasteable exports from SYLLABUS.md
 canvas:
@@ -45,12 +63,18 @@ canvas:
 serve:
 	mdbook serve -n 0.0.0.0
 
+# Directories under src/ that are generated from Lean sources, and so are the
+# only ones safe to delete.  Derived from SRC_DIRS rather than written out, so
+# the two cannot drift apart: a hardcoded src/Overview here would have deleted
+# a tracked file whose .lean source no longer exists.
+GENERATED_MD := $(addprefix src/,$(SRC_DIRS))
+
 # Clean generated markdown (but keep src/SUMMARY.md and src/introduction.md)
 clean-md:
-	rm -rf src/Overview src/FPCourse
+	rm -rf $(GENERATED_MD)
 
 # Clean everything including the built book
 clean:
-	rm -rf src/Overview src/FPCourse book/
+	rm -rf $(GENERATED_MD) book/
 
-.PHONY: all convert build stamp canvas serve clean-md clean
+.PHONY: all convert build a11y og slack slack-serve canvas serve clean-md clean

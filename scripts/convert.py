@@ -15,10 +15,11 @@ CODE_START = "```lean"
 CODE_END = "```"
 
 ISSUE_URL = "https://github.com/kevinsullivan/Lean4CS1/issues/new"
+# Styled by .issue-box in issue-box.css (registered as additional-css), not by
+# an inline style: an inline style cannot see the theme class mdBook stamps on
+# <html>, which left the box paper-white on coal / navy / ayu.
 ISSUE_BOX = (
-    '<div style="background: #f0f4f8; border: 1px solid #d0d7de; '
-    'border-radius: 6px; padding: 8px 12px; margin-top: 16px; '
-    'font-size: 0.9em;">'
+    '<div class="issue-box">'
     f'📝 <a href="{ISSUE_URL}">Report an issue</a> with this section'
     '</div>\n'
 )

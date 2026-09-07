@@ -4,7 +4,7 @@ import Mathlib.Data.Set.Function
 import Mathlib.Logic.Relation
 
 /-! @@@
-# Week 10: Sets and Relations
+# Sets and Relations
 
 ## Sets as predicates
 

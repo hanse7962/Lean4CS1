@@ -1,0 +1,24 @@
+ORGANIZATION     VALUATION                    WORK
+
+PRODUCTION SOFTWARE, FORMALLY VERIFIED
+Microsoft        $3.69T [2]                   Aeneas/Lean proofs in SymCrypt [13]
+Amazon / AWS     $2.75T [3]                   Cedar, modelled in Lean [14][15]
+Nethermind       private                      EVM/Yul semantics in Lean [27][28]
+Galois           private                      FVSpec benchmark [29][30]
+
+AI SOLVING ALREADY-FORMALIZED PROBLEMS
+ByteDance        >$600B [6] (proposed)        BFS-Prover [18]
+Tencent          $503B [7]                    HunyuanProver [19]
+DeepSeek         ~$74B [8] (open)             DeepSeek-Prover-V2 [20]
+Moonshot AI      ~$50B [9] (open, pre-money)  Kimina-Prover [21]
+
+INFORMAL MATHEMATICS INTO FORMAL
+Google DeepMind  Alphabet $4.13T [1]          AlphaProof [12]
+Mistral AI       ~$23B [10] (in talks)        Leanstral [22]
+Harmonic         $1.45B [11]                  Aristotle [23]
+Math, Inc.       undisclosed                  Gauss / OpenGauss [24][25]
+Huawei           employee-owned               Mathesis [26]
+
+NEW MATHEMATICS, MACHINE-CHECKABLE
+Anthropic        $965B [4]                    zeta bound, Lean-checked [16]
+OpenAI           $852B [5]                    ten proofs, Lean certificates [17]

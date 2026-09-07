@@ -1,6 +1,6 @@
 # CS6501-010 · Software Logic · Fall 2026
 
-### Intellectual Control for Quality and Accountability in the Era of AI and Autoformalization
+### Intellectual Control, Assurance, and Accountability in the Era of Agentic Software Engineering and Autoformalized Mathematics
 
 - **Instructor:** Kevin Sullivan · <sullivan@virginia.edu>
 - **Department:** Computer Science, University of Virginia

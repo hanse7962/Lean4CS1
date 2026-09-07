@@ -6,7 +6,7 @@ import Mathlib.Data.List.Pairwise
 open scoped List
 ```
 
-# Week 9: Specifications in Practice
+# Specifications in Practice
 
 ## What is a correct sort?
 
@@ -398,5 +398,5 @@ end Week09
 ```
 
 
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+<div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

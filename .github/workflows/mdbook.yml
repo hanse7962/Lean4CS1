@@ -84,8 +84,28 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
+      # The stamp preprocessor registered in book.toml substitutes the cover's
+      # @GIT_COMMIT@ token during the build.  Pass the commit in explicitly:
+      # the convert and NFC steps above rewrite tracked Markdown, so the
+      # checkout is dirty by now and the preprocessor's own default would
+      # label a clean build of a pushed commit "-dirty".
       - name: Build with mdBook
-        run: mdbook build
+        run: BOOK_COMMIT="${GITHUB_SHA::7}" mdbook build
+
+      # Accessibility gate: nothing is published unless the pages authored here
+      # pass WCAG 2.1 AA and Section 508.  mdBook's own pages are reported but
+      # do not block -- their violations come from the upstream theme (ARIA on
+      # the sidebar toggle, unlabelled task-list checkboxes, scrollable code
+      # regions) and cannot be fixed from this repository.
+      #
+      # Calls the script rather than `make a11y`, because that target depends on
+      # `build` and a rebuild here would run mdbook without BOOK_COMMIT,
+      # re-stamping the cover with the wrong value.
+      - name: Check accessibility
+        run: |
+          pip install --quiet playwright
+          python3 -m playwright install --with-deps chromium
+          python3 scripts/a11y_check.py book
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

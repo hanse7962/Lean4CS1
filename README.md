@@ -37,7 +37,6 @@ FPCourse/          Lean 4 source files for the 14-week Full Course
   T06_StreamsAndCurryHoward/           Unit 6 — Week 14
 scripts/
   convert.py       Literate Lean → Markdown (used by the Makefile and CI)
-  convert.hs       Haskell port of the same converter (not wired into any build)
 src/
   SUMMARY.md       mdBook table of contents
   introduction.md  Course overview page

@@ -4,7 +4,7 @@ import Mathlib.Logic.Basic
 import Mathlib.Data.Bool.Basic
 ```
 
-# Week 0: One language. Two readings.
+# One language. Two readings.
 
 When we write, we write about something. The something
 could be almost anything, real or imaginary: characters
@@ -40,11 +40,11 @@ This is not an analogy.  It is the same language, read two ways.
 | Constructor | Computational reading | Logical reading |
 |---|---|---|
 | Basic type | Atomic data | Atomic proposition |
-| `α → β` | Function from α to β | α implies β |
-| `α × β` | Pair: α bundled with β | Conjunction: α AND β |
-| `α ⊕ β` | Choice: α OR β (as data) | Disjunction: α OR β (as claim) |
-| `Empty` | Uninhabitable — nothing exists here | Falsity — no proof exists |
-| `α → Empty` | α itself is uninhabitable | Negation: α is contradictory |
+| `α → β` | Function from α to β | α IMPLIES β (α → β)|
+| `α × β` | Pair: α bundled with β | α AND β (α ∧ β) |
+| `α ⊕ β` | Choice: α OR β (as data) | α OR β (α ∨ β) |
+| `Empty` | Uninhabited | Logically False — no proof exists |
+| `α → Empty` | α itself is uninhabited | Negation: (¬α) |
 
 By the end of this week you will have seen all six in both readings.
 You will have one vocabulary — *types and their inhabitants* — that
@@ -97,7 +97,7 @@ are listed explicitly and cannot be broken down further.
 > `.length` counts characters.  **Predict** the length of `"hello" ++ ", world"` — remember
 > to count the comma and the space — before reading it.
 ```lean
-#eval ("hello" ++ ", world").length   -- predict first
+#eval ("hello" ++ ", world").length   -- predict firstw
 ```
 
 **The Lean notional machine.**  Think of Lean as a machine with one job:
@@ -853,5 +853,5 @@ end Week00
 ```
 
 
-<div style="background: #f0f4f8; border: 1px solid #d0d7de; border-radius: 6px; padding: 8px 12px; margin-top: 16px; font-size: 0.9em;">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
+<div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
 

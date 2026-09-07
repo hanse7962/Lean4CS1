@@ -3,7 +3,7 @@ import Mathlib.Data.List.Basic
 import Mathlib.Logic.Basic
 
 /-! @@@
-# Week 7: Polymorphism and Decidability
+# Polymorphism and Decidability
 
 ## Type variables and parametric polymorphism
 

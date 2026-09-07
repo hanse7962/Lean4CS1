@@ -1,7 +1,7 @@
 <div style="text-align: center; margin: 0.6rem 0 1.8rem;">
   <div style="font-size: 2.8em; font-weight: 700; line-height: 1.05;">Software Logic</div>
-  <div style="font-size: 1.22em; font-weight: 500; line-height: 1.12; margin-top: 0.38em;">Intellectual Control for Quality and Accountability</div>
-  <div style="font-size: 1.22em; font-weight: 500; line-height: 1.12; margin-top: 0.04em;">In the Era of AI and Autoformalization</div>
+  <div style="font-size: 1.22em; font-weight: 500; line-height: 1.12; margin-top: 0.38em;">Intellectual Control, Assurance, and Accountability</div>
+  <div style="font-size: 1.22em; font-weight: 500; line-height: 1.12; margin-top: 0.04em;">in the Era of Agentic Software Engineering and Autoformalized Mathematics</div>
   <div style="font-size: 1.05em; font-weight: 500; line-height: 1.2; margin-top: 0.9em;">Kevin Sullivan</div>
   <div style="font-size: 0.95em; font-weight: 400; line-height: 1.2; margin-top: 0.15em;">CS6501-010 Fall 2026</div>
 </div>
@@ -24,6 +24,10 @@ automating the production of a great deal of imperative code. Second, combined w
 breakout success of proof assistants for formalization of abstract mathematical statements
 and proofs, AI promises far greater practicality and utility of formal specification and
 proof construction in routine industrial software production.
+
+As of Fall 2026 there is exploding interest in the use of Lean for both formal mathematics and
+formal software specification and verification. A snapshot of where that stood at the start of
+this semester is in the appendix, [Lean 4 beyond research](../lean4-industry.md).
 
 However big challenges remain. Even with formal and machine-checked specifications, the
 rate at which generative AIs can produce specifications and proofs, now mixed together

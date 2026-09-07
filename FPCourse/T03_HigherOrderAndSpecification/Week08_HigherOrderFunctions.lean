@@ -2,7 +2,7 @@
 import Mathlib.Data.List.Basic
 
 /-! @@@
-# Week 8: Higher-Order Functions
+# Higher-Order Functions
 
 ## Functions as values
 
