@@ -850,10 +850,12 @@ pass `none` through.  State its spec in one line — *"`some a ↦ some (f a)`, 
 then confirm on instances.  Which **two** of the six constructors does the *type* of
 `mapOption` use?  Effort: one `match`, ~3 lines.
 
-match s with:
-  some a -> some (f a)
-  empty -> empty
+def mapOption (r : Option Nat)
+  match s with:
+    some a -> toString a
+    none -> none
 
+mapOption uses the sum type constructor.
 
 ```lean
 #guard mapOption (· * 2) (some 5) = some 10
@@ -877,6 +879,13 @@ two sides differ):
 Then state, in one line, the *side condition* on `a` and `b` under which `(a - b) + b = a`
 does hold.
 
+-- Counterexample:
+#eval decide (3 - 4) + 4 = 3
+Proposition evaluates to 4, which is not equal to 3
+
+-- Side condition:
+#eval decide (4 - 3) + 3 = 4
+-- Evaluates to 4, which satisfies the condition
 ---
 
 **[E0.5]** · *specification reading* · tier 3 (+ tier-1 check) · **stretch**
