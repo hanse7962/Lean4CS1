@@ -401,7 +401,9 @@ already in hand.  Effort: ~4 trace steps, 3 lines of code.
 #guard sumTo 10 = 55
 ```
 
--- DID NOT HAVE TIME
+
+
+-- ???
 
 ---
 
@@ -421,7 +423,7 @@ Instead confirm the spec on instances and on one bounded, decidable slice:
 In one line: which tier does the *general* `∀ n : Nat` statement live in, and which the
 three checks?
 
--- DID NOT HAVE TIME
+-- ???
 
 ---
 
@@ -440,7 +442,7 @@ the check **succeeds** (it confirms the two sides differ):
 one line, the *single edit* to the student's formula that makes it correct (compare with
 the spec in E3.2).
 
--- DID NOT HAVE TIME
+-- ???
 
 ---
 
@@ -462,7 +464,7 @@ For each claim, say **whether `decide` (equivalently an `rfl`-test) can close it
 --      for (d): the domain of n is infinite).
 ```
 
--- DID NOT HAVE TIME
+-- ???
 
 
 ---
