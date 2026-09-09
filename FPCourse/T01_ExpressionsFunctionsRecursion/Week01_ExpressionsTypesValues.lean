@@ -4,7 +4,7 @@ import Mathlib.Data.Bool.Basic
 import Mathlib.Logic.Basic
 
 /-! @@@
-# Expressions, Types, and Values
+# Week 1: Expressions, Types, and Values
 
 ## The central idea of this course
 
@@ -274,6 +274,9 @@ Nat.add adds two natural numbers together, so it takes two arguments.  It is cur
 Nat.mul multiplies two natural numbers together, taking two arguments.  It is curried.
 String.append adds one string to another, taking two arguments.  It is curried.
 
+For the polymorphic function, it can check the inputs against each other, but without knowing
+the type, it will not be able to create a new input nor respond to a case analysis.
+
 **[E1.2]** · *specification writing* · tier 1 · **core** · target `myStrNat`
 
 Define a product type pairing a `String` with a `Nat`, and a value
@@ -287,8 +290,13 @@ instance.  The projections `.1` and `.2` are your spec vocabulary (§1.4).
 #guard myStrNat.2 = 4
 #guard decide (myStrNat.1 = "lean" ∧ myStrNat.2 > 0) = true
 ```
-
 ---
+def myStrNat : String x Nat := ("lean, 4")
+
+inductive myStrNat : Type
+  | 1 : String
+  | 2 : Nat
+
 
 **[E1.3]** · *decidability identification* · tier 1 · **core**
 
@@ -296,8 +304,17 @@ For each proposition, say **whether `decide` can close it and why** — is it at
 built from connectives (`∧`, `¬`), and does its type carry a decision procedure? — *then*
 check only the ones that are decidable:
 
-(a) `17 * 23 = 391`  (b) `100 < 200 ∧ 200 < 300`  (c) `¬ (5 * 5 = 26)`
+(a) `17 * 23 = 391`
+Yes, the product is valid, so decide can close the expression.
+
+(b) `100 < 200 ∧ 200 < 300`
+Yes, the connectives separate out each statement.
+
+(c) `¬ (5 * 5 = 26)`
+Yes, while the internal claim is false, the negation will allow it to compile.
+
 (d) `(1.0 : Float) = 1.0`
+No, floating point imprecision would prevent the float numbers from ever being truly equal.
 
 ```lean
 #guard decide (17 * 23 = 391) = true
@@ -322,6 +339,13 @@ the mismatch and encode the witness as the *inequality that must hold*, so the c
 
 *First-step hint:* pick `a < b` so the subtraction underflows to `0`.  Then state, in one
 line, the side condition under which the original equation **does** hold.  Effort: 1 line.
+
+a = 1
+b = 5
+
+Side condition:
+a >= b
+
 
 ---
 

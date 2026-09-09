@@ -432,6 +432,11 @@ vs. `n + 1`).  State its specification as a `∀` proposition — *"`pred'` undo
 #guard decide (∀ n ∈ ([0, 1, 2, 3, 10] : List Nat), pred' (n + 1) = n) = true
 ```
 
+def pred' : Nat → Nat := fun n =>
+  match n with
+    | Nat.Zero => 0
+    | Nat.Pred => n - 1
+
 ---
 
 **[E2.2]** · *counterexample finding* · tier 1 · **core**
@@ -449,6 +454,8 @@ the two sides are unequal):
 At which single `n` does `double n = n + 2` accidentally hold?  State the *correct* spec
 of `double` in one line.
 
+n holds at n = 2, since 2 * 2 = 4 = 2 + 2, satisfying the condition.
+
 ---
 
 **[E2.3]** · *specification reading* · tier 2 (+ tier-3 reading) · **core**
@@ -464,6 +471,11 @@ closes the goal — do **not** author a proof of your own.  One confirmation tha
 #guard decide ((1 < 2) ∧ (2 < 3)) = true
 ```
 
+#check @And.intro
+- Computationally: Combines two terms together to form an "and" statement, constructing an object of type Type.
+- Logically: Joins two terms together into a single proposition
+
+symm closes the goal because of the identity rule, as no further values are added to each side.
 ---
 
 **[E2.4]** · *decidability identification* · tier 1 · **core**
@@ -471,8 +483,20 @@ closes the goal — do **not** author a proof of your own.  One confirmation tha
 For each proposition, say **whether `decide` can close it and why** (finite domain?
 decidable predicate?) *before* checking — the judgment is the point, not the tool-use:
 
-(a) `(2 < 3) ↔ ¬(3 ≤ 2)`  (b) `(True ∧ True) ↔ True`  (c) `(True ∧ False) ↔ False`
-(d) `¬ (True ∧ False)`  (e) `∀ n : Nat, n + 0 = n`
+(a) `(2 < 3) ↔ ¬(3 ≤ 2)`
+Yes, both conditions are true (the second condition is only true because of negation).
+
+(b) `(True ∧ True) ↔ True`
+Yes, despite the AND connective, all conditions still evaluate to true.
+
+(c) `(True ∧ False) ↔ False`
+No, False → False is not valid.
+
+(d) `¬ (True ∧ False)`
+Yes, the negation allows the condition to evaluate to true.
+
+(e) `∀ n : Nat, n + 0 = n`
+No, Nat is unbounded (infinite list).  With unary notation, decide will not compile.
 
 ```lean
 #guard decide ((2 < 3) ↔ ¬(3 ≤ 2)) = true
@@ -556,7 +580,7 @@ either function, and why.  Effort: ~4 trace steps.
 *First-step hint:* after `→I` on the two functions and the sum, the sum's side is
 unknown — `⊕E` (`match`) must come before you can apply `f` or `g`.
 
-<DID NOT HAVE TIME TO COMPLETE>
+???
 
 ---
 
