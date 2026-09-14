@@ -207,6 +207,9 @@ For all types α, β, for all a α and b β, swap(swap(a, b)) = (a, b)
 -- fun (a, b) => (b, a) with x for a and y for b
 -- (y, x)
 
+-- Proof that "times" is commutative
+-- Same function applied twice gets back same identity function
+
 def swap_comm {α β : Type u} (a : α) (b : β) :
 swap (swap (x, y)) = (x, y) := -- swap(swap(a, b)) is a type, but if we can prove it, then it is a type
 -- Two identical terms of left and right hand side after reduction
@@ -236,4 +239,71 @@ Equality is polymorphic type (polymorphic in two values of the same type)
 - Can prove that α == β that, if they are of the same type, reduce
   each side (simplify, apply functions you can), then see if you have
   exact same term on both sides
+
+Polymorphic equality type in lean
+
+*inductive*: defining a type
+
+-/
+
+
+/-
+-- Can apply eq by applying α to two values of the same type α
+-- Get a proposition (Prop; lowest type universe)
+-- Takes type and two args, then gives prop that asserts they are equals
+/
+
+  inductive Eq : α → α → Prop where
+    | refl (a : α) : Eq a a
+-/
+
+-- Example: Eq 3 4 yields a proposition
+-- Is there an introduction rule to construct a proof of that?
+-- 1 constructor for Eq type, so can only prove if you use Eq for 1 value
+-- of type α
+-- Get back proof that it equals itself; can't get a proof of 3 = 4; since you
+-- can't sneak two args into Eq constructor
+#check Eq 3 4 --Can never be proved
+
+/-
+When we write down "=", it is the same as
+"Eq(swap (swap (x, y))) (x, y)" or "arg1 = arg2"
+-/
+
+/-
+Would be good to rewrite in terms of identity function
+
+swap ∘ swap = id
+^ swap proves identity function
+-/
+
+
+-- Logic example:
+-- Bind name to value (proof that 7 > 0 and 7 ≤ 10)
+-- ^ == ×, except it's on logical side
+-- Val is theorem of proofs
+
+-- From proof of (a, b), you can get a proof of (b, a), as they are commutative
+-- Polymorphic type using And.intro
+-- Requires pair of proofs
+
+-- Prod.mk is functionally similar to And.intro
+def andExample : (7 > 0) ^ (7 ≤ 10) :=
+And.intro
+(by decide) -- If there is a decision procedure in Lean's library, finds it
+(by decide) -- Same as above, but a separate procedure
+
+-- Proof of P implies Q is a function that, if given proof of P, returns proof of Q
+-- If P is true, since proof of it, then Q is true (since proof of it)
+
+-- AND operator is commutative
+theorem impEx2 {P Q : Prop} : P ∧ Q → Q ∧ P :=
+fun ⟨ p, q ⟩ => ⟨ q, p ⟩
+
+
+/- Is OR commutative?
+
+If you have a proof of P OR Q, can you create proof of Q OR P?
+- Yes: Case analysis (two cases)
+
 -/
