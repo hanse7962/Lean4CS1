@@ -587,8 +587,9 @@ DERIVATION of orElim : Type → Type
   step 3 [→I] fun (h : A ⊕ B) => ? ⟶ goal: C, with f, g, h
   step 4 [⊕E] match h with .inl a => ? | inr b => ? ⟶ two goals A ⊕ B
   step 5 [⊕I] .inr a (case inl) ⟶ closed
-  step 5 [→E] f h : B ⟶ closed
-  step 6 [→E] g (f h) : C ⟶ closed
+  step 6 [⊕I] .inl b (case inr) ⟶ closed
+  step 7 [→E] f h : B
+  step 8 [→E] g (f h) : C ⟶ closed
 ---
 
 **[E2.9]** · *type-directed derivation · type reading (free theorems)* · tier 2 · **stretch**
