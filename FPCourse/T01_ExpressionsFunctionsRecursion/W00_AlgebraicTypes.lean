@@ -3,7 +3,7 @@ import Mathlib.Logic.Basic
 import Mathlib.Data.Bool.Basic
 
 /-! @@@
-# One language. Two readings.
+# Computation and Reasoning
 
 When we write, we write about something. The something
 could be almost anything, real or imaginary: characters

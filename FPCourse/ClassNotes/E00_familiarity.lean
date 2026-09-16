@@ -1,5 +1,5 @@
 /- @@@
-# In-Class Plan
+# Types: Computational and Logical
 
 The plan for today is to continue to learn about and practice with
 inductive type definitions. For today, pair up with a study buddy:

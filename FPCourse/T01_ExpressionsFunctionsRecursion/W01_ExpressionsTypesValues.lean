@@ -13,7 +13,7 @@ Every expression in Lean has a *type*.  Types do two jobs at once.
 - **Computational types** classify data: `Nat`, `Bool`, `String`,
   `Nat × Bool`.  A value of a computational type can be evaluated.
 
-- **Logical types** (also called *propositions*) classify *claims*.
+- **Logical types** (also called *propositions*) classify *proofs*.
   A value of a logical type is a *proof* that the claim holds.
 
 These two jobs are performed by the same language using the same

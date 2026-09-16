@@ -52,15 +52,18 @@
 
 ---
 
+# Class Notes
+
+*Notes from each class meeting.*
+
+- [September 9](./FPCourse/ClassNotes/E00_familiarity.md)
+- [Inference Rules and Derivations](./FPCourse/ClassNotes/E01_Derivations.md)
+- [Types as Values](./FPCourse/ClassNotes/E02_TypesAsValues.md)
+- [No Branching on Types](./FPCourse/ClassNotes/E03_noBranchOnTypes.md)
+
+---
+
 # Appendix
 
 - [Lean 4 beyond research](./lean4-industry.md)
 - [Accessibility](./accessibility.md)
-
----
-
-# Class Notes
-
-*Notes from each class meeting, by date.*
-
-- [September 9](./FPCourse/InClassNotes/Notes_09_09.md)
