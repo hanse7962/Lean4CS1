@@ -207,5 +207,76 @@ All of the above is a deep embedding: all of the terms in logic
 are of one type.
 
 This is typically what you'll see when building type language in Lean.
-
+- Once you introduce while loops, all bets are off as to whether program terminates.
+- Need to move from computational evaluation to logical reasoning about programs.
+-- Need to reason about whether program terminates; write propositions about programs, then
+   terminate them.
 -/
+
+-- --------------
+
+/-
+Products are commutative.
+
+And object of α × β is an ordered pair of (α, β)
+- (α × β) → (β × α)
+
+If Prod Logic is AND, Curry Howard of logical twin is ×
+- Ex: Nat × Bool
+  - (0, false)
+  - (1, true)
+  - etc.
+- Nat ∧ Bool (predicate logic expression combined as type)
+  - ⟨ p : P, q : Q ⟩
+  - Nat × Bool → Bool × Nat
+  - If proof P and Q is pair of proofs, proof of Q and P can be derived
+  - from proof of P and Q
+    - P ∧ Q → Q ∧ P
+- Build proof of AND by building proof of both
+  - Use by reaching into it and pulling out contents
+
+AND (∧) ⇔ Prop ×
+
+To prove X OR Y is true, need to show at least one is true
+- Want its meaning to be true if there's a proof of X or proof of Y
+
+SUM x + y ⇔ OR
+  | inl (x : X)
+  | inr (y : Y)
+-/
+
+-- Contains types of α or β
+-- Introduction rule
+inductive SumExample (α : Type u)(β : Type v) where
+  | inl (val : α) : SumExample α β
+  | inr (val : β) : SumExample α β
+
+-- Define 4 types
+  -- all inhabited -> default constructor mk is used by all structures
+structure Rice
+structure Potato
+structure Fish
+structure Chicken
+
+def choiceChicken : Chicken ⊕ Fish := Sum.inl Chicken.mk
+def choiceFish : Chicken ⊕ Fish := Sum.inr Fish.mk
+
+-- Elimination rule: Case analysis
+def meatToString : Chicken ⊕ Fish → String
+  | Sum.inl _ => "Chicken"
+  | Sum.inr _ => "Fish"
+
+-- Elim rule for obj of multiple constructors: need to provide an answer for all constructor cases
+-- So you know you get to final result without input cases.
+
+-- Can you return an object of type Fish or Chicken?
+-- return inr Chicken
+
+-- HW:
+-- Prove sum is commutative (swap order)
+-- Show exactly same thing for OR
+
+example :
+ Fish × (Rice ⊕ Potato) →
+ Fish × Rice ⊕ Fish × Potato
+ | (f, rorp) => sorry
