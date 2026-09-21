@@ -72,7 +72,7 @@ def id' (α : Sort u) : α → α               := fun n => n
 
 /- @@@
 
-## Type (Actually Value) Inference
+## Type/Value Inference
 In each of these examples the second *actual
 parameter* is a value of the type, α, given by
 the first parameter. The type checker enforces
@@ -133,7 +133,7 @@ look at its type and a few applications.
 
 
 /- @@@
-## Parametricity
+### Parametricity
 
 Parametric polymorphism depends on the implentation
 *not* relying on any knowledge at all of its actual
@@ -156,7 +156,7 @@ moved the first α argument to the left of the colon and
 gave it a name, making its scope global; then we return
 just *a* rather than *fun a => a*.
 
-## Binding Names to Arguments
+### Binding Names to Arguments
 
 Moving an argument to the left of the , which should
 look to you like ordinary, say, Python, syntax, means

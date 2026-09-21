@@ -22,6 +22,8 @@ type, are simply given by its constructors.
 @@@ -/
 
 
+-- The informal derivations are in th comments
+
 def n : Nat := Nat.zero     -- Nat.intro_zero
 def b : Bool := Bool.true   -- Bool.intro_true
 
@@ -71,7 +73,7 @@ pair by the functions *Prod.fst* and *Prod.snd* applied to it.
 @@@ -/
 
 /- @@@
-## Conjecture: Prod (×) is commutative.
+## Prod (×) is commutative.
 
 This informal statement is intended to assert that if
 you have *any* pair of types, call them α and β, there
@@ -92,6 +94,7 @@ with simple concrete examples. So let's assume for now
 that *α = Nat* and *β = Bool* and we'll just hardwire
 these choices in our first examples.
 
+### Special Case
 To begin, let's prove, by simply programming, that
 there is way, from *any* pair *(n, b) : Nat × Bool*
 to derive a pair, *(b, n)* of type *Bool × Nat*. A
@@ -122,24 +125,30 @@ def swap_nat_bool' : (Nat × Bool) → (Bool × Nat)
 #eval swap_nat_bool (3, true)
 
 /- @@@
+### Generalized Definition of Swap
+
 The notion of swapping the elements of any ordered
-pair is entirely sensible. It's general. It applies
+pair is entirely sensible *in general*. It applies
 not only to Nat-Bool pairs but to pairs of values of
 any type.
 
 We can express this in English by saying, if *α* and
-*β* are any types, with *(a, b)* is any pair of values
-of the product type, *α × β*, there is a way from that
-to derive the pair *(b, a)* of type *(β × α).* Call it
-*swap*.
+*β* are any types, with *(a, b)*, any pair of values
+of the product type, *α × β*, then there is a way from
+that value to derive the pair *(b, a) :(β × α).* Let's
+call it *swap*.
 
-We can translate this English description directly
-using the *forall (∀)* construct from basic predicate
-logic.
+What we're going to show then, is that if *α* and *β*
+are any types, then from any value of type *α × β* one
+can derive a value of type *β × α*. In logical notation
+we could write this: *∀ {α β : Type}, α × β → β × α*.
+Let's get to that in a few steps.
 @@@ -/
 
--- Specification
-def swap'' :
+/- @@@
+### A Verbose Definition
+@@@ -/
+def swap'''''' :
   ∀                 -- forall ..., for any ..., for every ...
     (α : Type u)    -- for any type α
     (β : Type v),   -- for any type β
@@ -147,8 +156,10 @@ def swap'' :
 -- Implementation
 := fun _ _ (a, b) => (b, a)
 
--- Let's clean it up. First implicit arguments
-def swap' :
+/- @@@
+### Implicit Arguments
+@@@ -/
+def swap''''' :
   ∀                 -- forall ..., for any ..., for every ...
     {α : Type u}    -- for any type α
     {β : Type v},   -- for any type β
@@ -156,40 +167,104 @@ def swap' :
 -- Now we omit explicit α and β arguments; they're inferred
 := fun (a, b) => (b, a)
 
-#eval swap'' Nat Bool (0, false)
-#eval swap' (0, false)
+#eval swap'''''' Nat Bool (0, false)
+#eval swap''''' (0, false)
 
--- Declare α and β together, bind both of them early, ∀ implicit
-def swap {α β : Type u} : α × β → β × α := fun (a, b) => (b, a)
+/- @@@
+What we just saw is the use of a logical  *∀* expression
+used to express the type of a function. The *∀* introduces
+named formal arguments. The comma separates them from the
+return type, here *α × β → β × α*. Finally, after the *:=*
+is the implementation, or proof, of the function type which
+we can also read as a logical proposition! A proof of a *∀*
+proposition is always just a function. Assuming you're given
+*any* values of the argument types, a proof must show you
+can derive *some* value/proof of the return type.
+@@@ -/
+
+/- @@@
+### Arguments of a Type Flock Together
+
+Code is clearer when arguments of the same type are declared
+together.
+@@@ -/
+def swap'''' {α β : Type u} : α × β → β × α := fun (a, b) => (b, a)
+
+/- @@@
+### Arguments Bound Early
+
+Arguments can be bound to names early by declarting then
+to the left of the colon. Such arguments are no longer
+subject to pattern matching using *match*.
+@@@ -/
+
+-- pattern matching on *α × β* argument
+def swap''' {α β : Type u} : α × β → β × α
+| (a, b) => (b, a)
+
+-- early binding of *α × β* argument
+def swap'' {α β : Type u} (p: α × β) : β × α :=
+match p with | (a, b) => (b, a)
+
+-- early binding of *α × β* argument
+def swap' {α β : Type u} (p: α × β) : β × α := (p.2, p.1)
+
+/- @@@
+### Type Inference
+Finally, Lean can infer the function type from its implementation.
+We can shorten the function definition by eliding its definition
+accordingly.
+@@@ -/
+def swap {α β : Type u} (p: α × β) := (p.2, p.1)
+
+/- @@@
+### Function / ∀ Elimination
+The elimination rule for any function type, of proof of a
+*∀* proposition, is just function application. You introdue
+a function by assuming arguments and deriving a result. You
+use a function by *apply*ing
+it.
+@@@ -/
 
 #eval swap (0, false)
 #eval swap ("No", "Way")
 
--- works but Lean can't print function values
--- #eval swap (@swap Nat Bool, @swap' Bool Nat)
-
 /- @@@
+## A Property of *swap* Formalized and Proved
+
 Finally, a correctness condition: swap is involutive!
 What that means is that applying it to any pair then
 applying it to the result returns the original input.
 @@@ -/
 
-theorem swap_comm {α β : Type u} (x : α) (y : β) :
-  Eq (swap (swap (x, y))) (x, y) := Eq.refl (x, y)
+theorem swap_involutive
+  {α β : Type u}
+  (x : α)
+  (y : β) :
+  Eq
+    (swap (swap (x, y)))
+    (x, y) :=
+Eq.refl (x, y)
 
 -- The Lean term, *(swap_comm 0 true)*, typechecks
 -- as a proof of swap (swap (0, true))) = (0, true)
-#check (swap_comm 0 true)
+#check (swap_involutive 0 true)
 
 /- @@@
-The generalized function is the proof of the ∀, and
-as the proof is itself a function, you can apply it
-to specific arguments as usual. Ah ha! We thus have
-the concept of ∀ introduction: define a function. And
-the ∀ elimination rule is applying it. The result is
-called *specialization*.
+The generalized function is the proof of the ∀. As
+the proof is itself a function, you can *apply* it
+to specific arguments as usual.
 
-Here, for example, we've applyied the ngeneral theorem,
+We thus see *∀ introduction*: assume an abitrary value,
+derive the result for it. That is, define a *function*.
+The the *∀ elimination* rule -- to use a function you
+*apply* it to *specific* particulars (arguments). The
+result is then produced for that special case. You will
+here *∀ introduction* called *universal generalization*,
+and *∀ elimination, *universal specialization*.
+
+THe preceding example, for instance, shows universal
+specialization. From a general theorem,
 swap_comm, to the special case argments, 0 and true, in
 this expression, *(swap_comm 0 true)*, to obtain a proof
 that swap applied twice to the specific pair, (0, true),
@@ -197,44 +272,110 @@ works as expected and returns that very same value.
 @@@ -/
 
 /- @@@
-The polymorphic equality type
+## The Polymorphic Equality Type
+
+In Lean, if *a* and *b* are of the same type, then
+*Eq a b* is the *proposition* that asserts *a = b*.
+Indeed *a = b* in Lean is just notation for *Eq a b*.
 @@@ -/
 
-#check Eq
+#check (@Eq)
+#check (Eq 1 1)
+#check (Eq 1 2)
 
 /- @@@
+### The Type
+
 inductive Eq : α → α → Prop where
   | refl (a : α) : Eq a a
 @@@ -/
 
-#check Eq 3 4
+/- @@@
+### A proof
 
--- def swap {α β : Type u} : α × β → β × α := fun (a, b) => (b, a)
--- fun (a, b) => (b, a) with x for a and y for b
--- (y, x)
+example : Eq 1 1 := Eq.refl 1
+@@@ -/
+
+-- The *Eq.refl* constructor *cannot* prove 1 = 2
+-- example : Eq 1 2 := _
+
 
 /- @@@
+You can think of *Eq a b* not only as a proposition
+(that *a* and *b* are equal) but also as the type of
+proofs of equality of *a* and *b*. Then the question
+is, is that type *inhabited*? Is there a proof of it
+or not?
+
+The answer is given by the single constructor of the
+Eq type. It's *Eq.refl*. It takes one argument and it
+typechecks as a proof that that argument is equal to
+itself. It's general, taking any single value of any
+type. Any value, *a* of *any* type is provable equal
+to itself, and there are no other proofs of equality.
+This is the introduction rule for proofs of equality!
+We'll address the elimination rule in due course.
+@@@ -/
+
+
+/- @@@
+## From Computation to Logic: And (∧) is Commutative
+
 And now for some actual mathematical logic. Let's prove
 that *logical And is commutative.* Let's start by proving
 a particular conjuction, *And (7 > 0) (7 ≤ 10)*, usually
 written with infix notation as *(7 > 0) ∧ (7 ≤ 10).* We'll
 then show if this is true so is *(7 ≤ 10) ∧ (7 > 0).*
+
+The Curry-Howard Correspondence observes that the Product
+*type builder* is the direct *computational* analog of the
+predicate logic *And* connective, or *proposition builder*.
+Given two propositions (represented as types), *P* and *Q*,
+it yields a new proposition (type), *And P Q*, or *P ∧ Q*.
+
+In Lean it's expressed as an inductive type with two smaller
+types in Prop as its arguments, with a single constructor
+that expresses its logical meaning: if you have *proofs* of
+the two individual argument types, respectively,then you can
+*pair them up*, using the *And.intro* constructor, to have
+(a term that typechecks as) a proof of *P ∧ Q*. Here's the
+actual *And* type builder definition.
+
+```lean
+structure And (a b : Prop) : Prop where
+  intro :: (left : a) (right : b)
+```
+
+You introduce a proof of *P ∧ Q* by applying *And.intro* to
+proofs *(p : P)* and *(q : Q)*. Given a proof *(h : P ∧ Q)*
+you use (eliminate) it by field projection: *(h.left : P)*,
+*(h.right : Q)*.
 @@@ -/
+
+#check And
+/- @@@
+Here's a first proof. The type we're proving here is a
+logical (in *Prop*), not a computational type, and Lean
+prefers that you use *theorem* instead of *def*. Try it.
+@@@ -/
+
+#check (7 > 0)
+#check (7 ≤ 10)
+#check (7 > 0) ∧ (7 ≤ 10)
+
+example : (7 > 0) ∧ (7 ≤ 10) :=
+  And.intro         -- introduction applied to two proofs
+    (by decide)     -- decision procedure, proof of 7 > 0
+    (by decide)     -- decision procedure, proof of 7 ≤ 10
 
 
 /- @@@
-Here's the first proof. The type we're proving here is a
-proposition, not a computational type, and Lean prefers
-that you use *theorem* instead of *def*. Try it.
+For this special case we can prove that *And commutes*.
+Given a proof of (7 > 0) ∧ (7 ≤ 10) one can then derive
+a proof (7 ≤ 10) ∧ (7 > 0). A proof of the former is just
+a kind of *pair* of proofs, and the latter, a *pair* in
+the swapped/opposite order.
 @@@ -/
-def andExample : (7 > 0) ∧ (7 ≤ 10) :=
-  And.intro         -- introduction rule
-    (by decide)     -- decision procedure proof of 7 > 0
-    (by decide)     -- decision procedure proof of 7 ≤ 10
-
-
--- For this special case we can prove that *And commutes*
--- The astute student will see right away that this is swap!
 theorem impExample : (7 > 0) ∧ (7 ≤ 10) → (7 ≤ 10) ∧ (7 > 0) :=
   fun conj =>       -- → introduction
     (
@@ -297,6 +438,8 @@ structure And (a b : Prop) : Prop where
 
 
 /- @@@
+### The Curry Howard Correspondence
+
 The term, Curry-Howard Correspondence, names the
 recognition that the *inference rules* of deductive
 *reasoning* in predicate logic (here higher-order and
@@ -312,7 +455,7 @@ the flippability of `Sum` and the commutative of `Or`.
 
 
 /- @@@
-## Expected Preparation for Next Class
+## The Sum-Or Correspondence
 
 Recall that `Sum α β` or (`α ⊕ β`) is the type of term
 that holds either a value (a : α) or a value (b : β).
@@ -324,6 +467,8 @@ contrast, is proof that *both* multiplicand types are.
 @@@ -/
 
 /- @@@
+### The Sum Type
+
 Here's the computational Sum type builder.
 
 ```lean
@@ -344,80 +489,97 @@ def choiceFish : Chicken ⊕ Fish := Sum.inr Fish.mk
 
 -- Elimination is by case analysis
 
-def proteinToString : Chicken ⊕ Fish → String
+def meatToString : Chicken ⊕ Fish → String
 | Sum.inl _ => "Chicken"
 | Sum.inr _ => "Fish"
 
-
--- PROVE: Chicken ⊕ Fish → Fish ⊕ Chicken
--- STATE AND PROVE: ⊕ is commutative in general
+#eval meatToString choiceChicken
+#eval meatToString choiceFish
 
 /- @@@
-PROVE that someone who ordered "Fish, and either
+## EXERCISES:
+@@@ -/
+
+-- #1: PROVE: Chicken ⊕ Fish → Fish ⊕ Chicken
+
+/- @@@
+#2: PROVE: that someone who ordered "Fish, and either
 Rice or Potato" should be satisfied to be served
 "Rice or Potato, and Fish. Clearly, it's true: you
 just have to turn the plate a little! To prove it
 it would do to show there's a function that applied
 to a whole *meal, "Fish, and either Rice or Potato"
-derives and returns "Rice or Potato, and Fish." Ok,
-that's easy. Boring. We've already done that!
+derives and returns a meal, "either Rice or Potato,
+and Fish."
 @@@-/
 
 example : Fish × (Rice ⊕ Potato) → (Rice ⊕ Potato) × Fish
-| (f, rorp) => (rorp, f)
+| _ => sorry    -- replace this line
 
 /- @@@
-That's just commutativity of × again. Let push `Or` to the
-front now. Should a person who ordered Fish and either potato
-or rice be happy they're served either Fish and Rice, or Fish
-and Potato?
+That's just commutativity of × again. We proved it by
+running the whole proof strategy again for this special
+case of the general principle; but we don't have to, as
+we have a general "theorem" (swap function) for that.
+
+The reason we prefer to prove generalized theorems or
+write general-purpose functions is because we can then
+*apply* them where needed without having to reproduce
+the whole derivation from scratch. It's makes math work!
 @@@ -/
 
--- Replace the sorry with the right content
 example :
-  Fish × (Rice ⊕ Potato) →
-  Fish × Rice ⊕ Fish × Potato
-| (f, rorp) => sorry
+  Fish × (Rice ⊕ Potato) → (Rice ⊕ Potato) × Fish
+  | meal => swap meal
 
+/- @@@
+#3: Prove. Here's an example suggesting that × distributes
+over ⊕ just as numerical multiplication distributes over
+addition: x * (y + z) = x * y + x * z. Show that the
+same principle holds for × and ⊕, first in a specific
+example, then in general.
+@@@ -/
 
--- Can you convert in either direction?
 example :
-  (Fish × (Rice ⊕ Potato) → Fish × Rice ⊕ Fish × Potato) ×
-  (Fish × Rice ⊕ Fish × Potato) → (Fish × (Rice ⊕ Potato))
-| _ => sorry
+  Fish × (Rice ⊕ Potato) → Fish × Rice ⊕ Fish × Potato
+  | (f, rop) =>
+      sorry
+  -- you've got fish; now does rop hold rice or potato?
+
+-- #4 Prove the other direction too.
+example :
+  Fish × Rice ⊕ Fish × Potato → Fish × (Rice ⊕ Potato)
+  | _ => sorry    -- replace line with your code
 
 
 /- @@@
-## The Curry-Howard Twin of ⊕ is ∨
+### The Curry-Howard Twin of ⊕ is ∨
 
-Here is Lean's `Or` (∨) type (here specifically
-propostion) builder. It's not itself a type because
-it takes arguments. When fully reduced, it's a type.
-To fully reduce it apply it to two arguments, each
-itself a proposition. What you're specifying here in
-essence is part of the *syntax* of predicate logic.
-It's meaning is in the introduction and elimination
-rules: in the constructors and elimination methods.
+Just as *And* (∧) is the Curry-Howard twin of *×*,
+so *Or* (∨) is the twin of ⊕. Go back and study the
+inductive definition of *Sum* (⊕) then compare with
+it's logical counterpart, `Or` (∨), copied below.
 
-```
+```lean
 inductive Or (a b : Prop) : Prop where
   | inl (h : a) : Or a b
   | inr (h : b) : Or a b
 ```
 
-Infix notation for the type, Or P Q, is the usual P ∨ Q.
+Infix notation for the type, *Or P Q*, is *P ∨ Q*.
 @@@ -/
 
 
-
--- PROVE: `Or` (∨) is commutative
--- Assume a proof of either P or Q
--- Derive a proof of Q ∨ P
+-- #5: PROVE: `Or` (∨) is commutative *in general*
 
 example {P Q : Prop} : P ∨ Q → Q ∨ P
-| Or.inl p => Or.inr p
-| Or.inr q => Or.inl q
+| _ => sorry  -- replace with your code
 
+-- #6: Prove ∧ distributes over or in the usual way
+example {P Q R : Prop } : P ∧ (Q ∨ R) → P ∧ Q ∨ P ∧ R
+| _ => sorry  -- replace this line with your code
 
--- PROVE: P ∨ Q ∧ R → P ∧ Q ∨ P ∧ R -- ∧ has higher prec.
--- PROVE P ∨ Q ∨ R → (P ∨ Q) ∨ R
+-- #7: Prove that ∨ is associative. It's left associative
+-- so note that P ∨ Q ∨ R is read as (P ∨ Q) ∨ R.
+example {P Q R : Prop } :  P ∨ Q ∨ R → (P ∨ Q) ∨ R
+| _ => sorry  -- replace this line with your code

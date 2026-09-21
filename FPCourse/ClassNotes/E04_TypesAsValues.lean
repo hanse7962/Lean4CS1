@@ -125,3 +125,29 @@ the form of a data type definition, restricting
 the combinations of values that will typecheck
 as satisfying the invariants of a structure.
 @@@ -/
+
+/- @@@
+The same idea works to guard function applications
+to ensure their *preconditions* are verified. The
+trick is to expres the precondition as a proposition
+about the values of the ordinary arguments and then
+to require a proof of it as an addition argument to
+the function. If you can't construct such a proof,
+you can't call the function with those arguments!
+Here's a function that takes two Nat arguments but
+only if the second is the first one squared. (It's
+a sill example but illustrates the point.)
+@@@ -/
+
+def squareChecker (n m : Nat) (_h : n*n = m) : Unit :=
+  Unit.unit
+
+-- A static square checking function.
+-- Purpose is typechecking not return value.
+-- So return type is set to Unit (void in C).
+#eval squareChecker 1 1 rfl
+#eval squareChecker 2 4 rfl
+#eval squareChecker 3 9 rfl
+
+-- uncomment: type error blocks application
+--#eval squareChecker 3 10 rfl
