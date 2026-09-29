@@ -95,9 +95,11 @@ Doesn't give proof of P, so not constructively valid
 - Shows ¬P is false, but no proof of P to extract
 -/
 
-example {P : Prop} : ¬¬P → P :=
+example {P : Prop} {em : ∀ (X : Prop), X ∨ ¬X}  : ¬¬P → P :=
   fun nnp =>
-    _
+    match em P with
+    | Or.inl p => p
+    | Or.inr notP => False.elim (nnp notP)
 
 theorem deMorganNotOr (P Q : Prop) : ¬(P ∨ Q) → (¬P ∧ ¬Q) :=
   fun notPorQ => -- Assume proof of left side
@@ -175,7 +177,20 @@ To make it go through, for any proposition x, can have, for free, a proof of x o
 -- HW:
 example (P Q : Prop) {em : ∀ (X : Prop), X ∨ ¬X} : ¬(P ∧ Q) → (¬P ∨ ¬Q) :=
   fun NotPAndQ =>
-    _
+    let PorNotP := em P
+    let QorNotQ := em Q
+
+    Or.inl (fun h => NotPAndQ (And.intro
+      (match PorNotP with
+        | Or.inl p => p
+        | Or.inr notP => sorry
+      )
+      (match QorNotQ with
+      | Or.inl q => q
+      | Or.inr notQ => sorry
+      )
+    ))
+
 
 theorem proofByContradictionFromExcludedMiddle : (∀ P : Prop, P ∨ ¬P) → (∀ P : Prop, ¬¬P → P) :=
   fun em =>
