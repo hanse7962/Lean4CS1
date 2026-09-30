@@ -174,22 +174,38 @@ To make it go through, for any proposition x, can have, for free, a proof of x o
     - Makes double negation valid
 -/
 
+def neg (a : Prop) : Prop := a → False
+
 -- HW:
 example (P Q : Prop) {em : ∀ (X : Prop), X ∨ ¬X} : ¬(P ∧ Q) → (¬P ∨ ¬Q) :=
   fun NotPAndQ =>
     let PorNotP := em P
     let QorNotQ := em Q
 
+/-
     Or.inl (fun h => NotPAndQ (And.intro
       (match PorNotP with
         | Or.inl p => p
-        | Or.inr notP => sorry
+        | Or.inr notP => False.elim (notP h)
       )
       (match QorNotQ with
       | Or.inl q => q
-      | Or.inr notQ => sorry
+      | Or.inr notQ => False.elim (notQ h)
       )
     ))
+-/
+
+
+  Or.inl (fun h => match PorNotP with
+    | Or.inl p => match QorNotQ with
+      | Or.inl q => NotPAndQ (And.intro p q)
+      | Or.inr notQ => False.elim (NotPAndQ (And.intro p q))
+    | Or.inr notP => match QorNotQ with
+      | Or.inl q => False.elim (NotPAndQ (And.intro h q))
+      | Or.inr notQ => False.elim (NotPAndQ (And.intro h notQ))
+  )
+
+
 
 
 theorem proofByContradictionFromExcludedMiddle : (∀ P : Prop, P ∨ ¬P) → (∀ P : Prop, ¬¬P → P) :=
