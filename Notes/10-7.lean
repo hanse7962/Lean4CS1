@@ -164,5 +164,119 @@ example : ∃ (d: Dog), Friendly d :=
 /-
 Proof of an existential proposition is a *dependent pair*
 - Type of second value depends on type of first value
-
+- Has its own notation ⟨ ⟩
 -/
+
+-- Equivalent to above
+example : ∃ (d: Dog), Friendly d :=
+⟨ Iris, Friendly.irisFriendly ⟩
+
+-- Proof that if exists dog is both friendly and furry (suitable), then a friendly dog exists
+def simpf : Prop :=
+  (∃ d, Suitable d) →
+  (∃ d, Friendly d)
+
+-- Formalization of Exists Proof in Lean
+-- Polymorphic: can have proposition of any type at all
+-- Explicit argument to existential proposition builder
+inductive MyExists {α : Sort u} (p : α → Prop) : Prop where
+| intro (w : α) (h : p w) : MyExists p
+-- w is witness
+-- h is hypothesis of proof of hypothesis that w satisfies p
+
+-- You cannot get data back out of a proof of existence
+  -- When we apply Exists.elim, there is an assumption that there is
+  -- a dog x along with a proof Px
+  -- Erases the witness in the process
+
+example : simpf :=
+  fun pfs =>
+    _
+
+
+-- "There exists a number n such that n + 1 = 4"
+-- 3 is the only valid witness; if you plug in 3, it is a proof based on reflexive equality (rfl)
+example : ∃ n : Nat, n + 1 = 4 := ⟨3, rfl⟩
+
+-- "There is some number n that is greater than 3"
+example : ∃ n : Nat, n > 3 := ⟨4, Nat.le.refl⟩
+
+-- Nested propositions
+-- What are the pairs of objects that satify predicate?
+example : ∃ a : Nat, ∃ b : Nat, a + b = 5 := ⟨2, 3, rfl⟩
+
+/-
+Most mathematicians assume set theory, not type theory
+- Set theory: With axiom of choice and some other things; standard axiom for practical math
+
+We are in the world of type theory
+- If we want to represent a set, we need a way to represent sets of things
+- Here, we represent set of pairs; what pairs are in the set of pairs that satisfy proposition?
+  - ⟨0, 5⟩, ⟨1, 4⟩, etc.
+- A predicate can be used to represent a binary proposition, or a set of ordered pairs
+  - Can use propositions like this to represent a set of objects
+
+To represent intersection of 2 sets, it is the conjunction of the propositions that
+specify original sets
+- i.e. ∧ connector
+
+Embed language of set theory and theory of relations
+
+*Reflexive relation*:
+Set of pairs specified by predicate with 2 args such that
+every element is related to itself
+- Ex: Specify relation called "Likes" as predicate; returns relation of itself
+- Translate proposition into predicate of itself
+-/
+
+/-
+*Getting the witness back out
+
+Take apart proof to get out pieces, but get less out than what you put in
+-/
+
+#check @Exists.elim
+
+/-
+Predicate on objects
+- α → Value
+- R : Property
+- S: Proposition
+- Proof that exists alpha that satisfies property R
+
+k is top-level connective
+- If every α object has property R, then S is true
+- Assume there is some object x for which R is true
+- If every such x has property R, then we can conclude that S is true
+
+h guarantees that you have at least one object that satisfies the proposition
+- ∀x is trivially true since h assures there is at least one x with property R
+
+Assumed values of all arg types
+- α is not useful
+- R is just ambient predicate; nothing to do with it
+- S is prop, not much we can do with it
+- k is an assumption of the implication being true/valid
+  - If every α has property R, then it is true
+  - k is a function; if you have an object you can apply it to, you could use itz
+- h gives you object of type α with property R
+
+We can deduce that there is some object w of type α, and it must have property R
+- We can use logical inference to add 2 elements to context
+  - w of type α
+  - Proof of it
+- When we have object of type α, we can feed it into k to obtain a proof of S
+  - Won't tell value, but will say that the value exists
+  - When we unpack h, we get both a witness and a proof about that witness
+    - Allows us to use proof of Rx to feed into function
+
+- After applying Exists.elim onto h and k, we get what we need
+-/
+
+example
+  {α : Type}
+  (R : α → Prop)
+  (S : Prop)
+  (h : ∃ x : α, R x)
+  (k : ∀ x : α, R x → S) : S :=
+  Exists.elim h k
