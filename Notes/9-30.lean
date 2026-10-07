@@ -119,6 +119,7 @@ inductive Furry : Dog -> Prop where
 -- Programming languages are deterministic
   -- Can formalize properties in all fields
 -- If both friendly and furry, it is house friendly/suitable
+#guard_msgs in
 example : Friendly Iris ∧ Furry Iris := _
 
 -- To be applicable to any dog (D), need D to be friendly and furry
@@ -209,5 +210,26 @@ example : (∃ (d : Dog), Friendly d) :=
     -- Ex: Fido and Proof that Fido is Friendly
 
 /-
-Exists elim rule
+Exists elimination rule
+
+- If you get arbitrary proof that there exists a friendly dog, it doesn't
+tell you what do it is
+- Doesn't tell you the actual witness to construct proof; witness never
+  comes back out again
+- Can get both pieces back out
+- Proof of an existential proposition is also a pair
+- Proofs of existence are information constructs
+
+Assume pf: ∃(x : X), Px, want to show something else
+
+To use proof like this:
+- Get arbitrary x : X
+- Have proof pfx (proof of existence) and eliminate it, you get w (arbitrary witness)
+  along with pw (proof that witness has property)
+- Just get knowledge that object has property
+  - If there exists a dog that is friendly and furry, there exists a dog that is friendly
+  - Eliminate p(friendly and furry), then get p(friendly)
+  - Just one part of And proof
+- All you know is that there is some object that has property
+  - Can use witness to do whatever you need to do offstream
 -/

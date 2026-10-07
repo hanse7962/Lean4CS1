@@ -178,32 +178,29 @@ def neg (a : Prop) : Prop := a → False
 
 -- HW:
 example (P Q : Prop) {em : ∀ (X : Prop), X ∨ ¬X} : ¬(P ∧ Q) → (¬P ∨ ¬Q) :=
+  fun npandq =>
+  -- Classical reasoning Assume every prop is provably true or provably false
+
+    match (em P) with
+    | Or.inl p => match em Q with
+      | Or.inl q => False.elim (npandq (And.intro p q))
+      | Or.inr nq => Or.inr nq
+    | Or.inr np => Or.inl np
+
+
+  /-
   fun NotPAndQ =>
     let PorNotP := em P
     let QorNotQ := em Q
 
-/-
-    Or.inl (fun h => NotPAndQ (And.intro
-      (match PorNotP with
-        | Or.inl p => p
-        | Or.inr notP => False.elim (notP h)
-      )
-      (match QorNotQ with
-      | Or.inl q => q
-      | Or.inr notQ => False.elim (notQ h)
-      )
-    ))
--/
 
+    match (em P) with
+    | Or.inl p =>
+      match (em Q) with
+      | Or.inl q => nomatch (NotPAndQ (And.intro p q))
+      | Or.inr nq => Or.inr nq
+    | Or.inr np => Or.inl np-/
 
-  Or.inl (fun h => match PorNotP with
-    | Or.inl p => match QorNotQ with
-      | Or.inl q => NotPAndQ (And.intro p q)
-      | Or.inr notQ => False.elim (NotPAndQ (And.intro p q))
-    | Or.inr notP => match QorNotQ with
-      | Or.inl q => False.elim (NotPAndQ (And.intro h q))
-      | Or.inr notQ => False.elim (NotPAndQ (And.intro h notQ))
-  )
 
 
 
