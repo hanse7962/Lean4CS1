@@ -50,6 +50,8 @@ inductive Furry : Dog → Prop where
 | irisFurry : Furry Iris
 | sargentFurry : Furry Sargent
 
+open Friendly Furry
+
 /- @@@
 Iris is both friendly and furry, and we can prove it by pairing
 the two pieces of evidence.
@@ -125,7 +127,16 @@ works.
 @@@ -/
 
 example : ∃ (d : Dog), Friendly d :=
-  Exists.intro Iris Friendly.irisFriendly
+  -- Exists.intro Iris irisFriendly
+  ⟨ Iris, irisFriendly ⟩
+
+def simpf : Prop :=
+  (∃ d, Suitable d) →
+  (∃ d, Friendly d)
+
+-- example : simpf :=
+--   fun pfs =>
+--     _
 
 /- @@@
 ### The Rule Behind That Proof
@@ -140,6 +151,8 @@ clashing with the library's.
 
 inductive MyExists {α : Sort u} (p : α → Prop) : Prop where
 | intro (w : α) (h : p w) : MyExists p
+
+#check Exists
 
 /- @@@
 One type, one constructor, so there is exactly one way to build a
@@ -260,9 +273,35 @@ The same rule is packaged in the standard library as
 
 #check @Exists.elim
 
-example {α : Type} (R : α → Prop) (S : Prop)
-    (h : ∃ x : α, R x) (k : ∀ x : α, R x → S) : S :=
-  Exists.elim h k
+/- @@@
+Write out the signature of Exists.elim so it's readable:
+
+Exists.elim.{u}                 -- *IF* u is any universe level
+  {α : Sort u}                  -- and if α is any type in universe u
+  {p : α → Prop}                -- and if p is any property of α values
+  {b : Prop}                    -- and if b is any desired conclusion
+
+  -- the two explicit arguments to exists.elim
+  (h₁ : ∃ x, p x)               -- and if there is at least one x with p
+  (h₂ : ∀ (a : α), p a → b)   -- and if any a has property p, then b
+  :                             -- *THEN*
+  b                             -- b, by the rule of false elimination
+
+The main source of confusion arises from bad parsing (precedence)
+
+  - (h₂ : ∀ (a : α), p a → b) as
+  - (h₂ : (∀ (a : α), p a) → b))    -- wrong, → precedence than ∀
+  - (h₂ : ∀ (a : α), (p a → b))     -- right, → grabs (p a) and b before ∀
+
+So the correct reading of (h₂ : ∀ (a : α), p a → b) is "given any a, if
+a has property p then b" rather than "if every a has property p, then b".
+
+Now the logical reasoning should be clear. Focus on seeing how the last two
+assumptions make the conclusion true. First, suppose there is at least one
+x with propery p, Second, if a is *any* α value, then if a has property p,
+then (you can have a proof of) b. Put the two together and you get b by the
+logical inference rule of Exists elimination (Exists.elim in Lean).
+@@@ -/
 
 /- @@@
 Anonymous constructor notation works in patterns, too, which makes
@@ -271,8 +310,12 @@ in term mode. In the next example we weaken what we know about the
 witness: we keep the same witness and upgrade its evidence.
 @@@ -/
 
-example {α : Type} (P Q : α → Prop) (imp : ∀ x : α, P x → Q x) :
-    (∃ x : α, P x) → (∃ x : α, Q x) :=
+example
+  {α : Type}
+  (P Q : α → Prop)
+  (imp : ∀ x : α, P x → Q x) :
+  (∃ x : α, P x) →
+  (∃ x : α, Q x) :=
   fun ⟨w, pw⟩ => ⟨w, imp w pw⟩
 
 /- @@@
@@ -283,7 +326,8 @@ handed.
 @@@ -/
 
 example {α : Type} (P Q : α → Prop) :
-    (∃ x : α, P x ∧ Q x) → (∃ x : α, Q x ∧ P x) :=
+    (∃ x : α, P x ∧ Q x) →
+    (∃ x : α, Q x ∧ P x) :=
   fun ⟨w, pw, qw⟩ => ⟨w, qw, pw⟩
 
 /- @@@
@@ -296,12 +340,13 @@ specialized to Sargent.
 @@@ -/
 
 example {α : Type} (P : α → Prop) :
-    (∃ x : α, ¬P x) → ¬(∀ x : α, P x) :=
+    (∃ x : α, ¬P x) →
+    ¬(∀ x : α, P x) :=
   fun ⟨w, notPw⟩ =>
     fun allP => notPw (allP w)
 
 /- @@@
-## The Boundary: A Witness Is Not Data
+## A Witness Is Not Data
 
 Finally, the boundary. The witness genuinely cannot escape the
 match. `Exists` lives in `Prop`, so a proof of an existential may
@@ -340,12 +385,16 @@ introduction to `open Classical` and the `em` it provides.
 
 open Classical
 
-example {α : Type} (R : α → Prop) :
-    (¬(∃ x : α, R x) → False) → ∃ x : α, R x :=
-  fun notNotExists =>
-    match em (∃ x : α, R x) with
-    | Or.inl existsRx => existsRx
-    | Or.inr notExists => False.elim (notNotExists notExists)
+example
+  {α : Type}
+  (R : α → Prop)
+  :
+  (¬(∃ x : α, R x) → False) →
+  ∃ x : α, R x :=
+fun notNotExists =>
+  match em (∃ x : α, R x) with
+  | Or.inl existsRx => existsRx
+  | Or.inr notExists => False.elim (notNotExists notExists)
 
 /- @@@
 Read what this proof does and does not deliver. It establishes
@@ -354,7 +403,7 @@ nothing in it to run. The next section makes that cost concrete.
 @@@ -/
 
 /- @@@
-### A Concrete Case: Is There an Odd Perfect Number?
+### Example: Is There an Odd Perfect Number?
 
 Before any Lean, here is the question.
 
@@ -370,9 +419,8 @@ is not for lack of effort: it is known that an odd perfect number,
 if there is one, must be greater than 10^2200, and must satisfy a
 long list of further constraints. The question
 
-  Is there an odd perfect number?
-
-is one of the oldest unresolved questions in mathematics.
+Is there an odd perfect number? is one of the oldest unresolved
+questions in mathematics.
 
 Hold that question in mind. It is an existential claim, so this
 chapter has given us two ways to try to settle it. We can exhibit
@@ -390,6 +438,8 @@ def sumProperDivisors (n : Nat) : Nat :=
   (List.range n).foldl
     (fun acc d => if d > 0 && n % d == 0 then acc + d else acc) 0
 
+
+-- Translate this computable "Boolaen predicate"
 def isPerfect (n : Nat) : Bool := n > 0 && sumProperDivisors n == n
 
 /- @@@
@@ -398,18 +448,42 @@ results below, and `#guard_msgs` checks that they are what we
 claim they are.
 @@@ -/
 
-#eval sumProperDivisors 28
-
-/-- info: true -/
+-- not perfect numbers
+/-- info: 0 -/
 #guard_msgs in
-#eval isPerfect 28
+#eval sumProperDivisors 1
+
+/-- info: 1 -/
+#guard_msgs in
+#eval sumProperDivisors 2
+
+/-- info: 1 -/
+#guard_msgs in
+#eval sumProperDivisors 3
+
+/-- info: 3 -/
+#guard_msgs in
+#eval sumProperDivisors 4
+
+/-- info: 1 -/
+#guard_msgs in
+#eval sumProperDivisors 5
+
+-- two perfect numbers
+/-- info: 6 -/
+#guard_msgs in
+#eval sumProperDivisors 6
+
+/-- info: 28 -/
+#guard_msgs in
+#eval sumProperDivisors 28
 
 /- @@@
 Searching a *bounded* range is also ordinary programming. Here
 are all the perfect numbers below ten thousand. This is a real
 mathematical result about a finite range, and the code that
 produced it is the evidence: we can rerun it, and we can read it
-to see what it checked.
+to see what it checked. (Comment out the #guard line to run it).
 @@@ -/
 
 /-- info: [6, 28, 496, 8128] -/
@@ -437,7 +511,8 @@ content, and every answer we got came out of running it.
 
 Now state the open question as a proposition. It is exactly an
 existential: not a claim about any particular n, nor about any
-finite range of them, but the claim that some n works.
+finite range of them, but the claim that some n works. Assert:
+there is an odd perfect number.
 @@@ -/
 
 def SomeOddPerfect : Prop := ∃ n, isOddPerfect n = true
@@ -445,9 +520,9 @@ def SomeOddPerfect : Prop := ∃ n, isOddPerfect n = true
 /- @@@
 To prove this the way the introduction rule asks, we would write
 `⟨w, pf⟩` for some specific numeral w, together with a proof that
-`isOddPerfect w = true`. Nobody can fill in that w. A witness
-would settle a question that has stood for centuries, and if one
-exists it has more than 2200 digits.
+`isOddPerfect w = true`. But today nobody has a way to fill in w.
+A witness would settle a question that has stood for centuries. We
+do know that if one exists it has more than 2200 digits (base 10).
 
 Now watch how cheap the classical route is. A single application
 of excluded middle settles the disjunction, right now, with no
@@ -463,8 +538,9 @@ we have and what we do not have. We have a proof that the question
 has an answer. We do not have the answer. No n comes out of
 `oddPerfectOrNot`, and there is nothing in it to run. A question
 that has resisted mathematicians for centuries was not settled
-here; only the claim that it has *some* answer was, and that claim
-was free.
+here; only the claim that it has *some* answer, which we got for
+free from *em* (by applying the additional non-constructive axiom
+of the excluded middle).
 
 The gap turns into a compiler error the moment we try to *use* the
 answer in a program. Recall the `open Classical` above, which
@@ -475,6 +551,9 @@ an odd perfect number exists. Then code generation runs, and fails.
 The error names exactly what is missing.
 @@@ -/
 
+
+-- The precise error if code is unguarded, as a doc string.
+-- Comment out the guard to see the error.
 /--
 error: failed to compile definition, consider marking it as 'noncomputable' because it depends on 'propDecidable', which is 'noncomputable'
 -/
@@ -492,6 +571,7 @@ accepted, and `#eval` still cannot run it.
 noncomputable def oddPerfectAnswer' : String :=
   if SomeOddPerfect then "one exists" else "none exists"
 
+-- comment out docstring and @guard to see the error
 /--
 error: failed to compile definition, consider marking it as 'noncomputable' because it depends on 'oddPerfectAnswer'', which is 'noncomputable'
 -/
@@ -499,21 +579,21 @@ error: failed to compile definition, consider marking it as 'noncomputable' beca
 #eval oddPerfectAnswer'
 
 /- @@@
-Compare the two halves of this example. `isPerfect` and the
-bounded filter are constructions: they carry executable content,
-and we extracted real answers from them. `oddPerfectAnswer` is a
-proof dressed up as a program. The constructive reading of `∃`
-demands a witness and would have given us the answer along with
-the proof. Classical logic gave us the proposition "this question
-has an answer" for free, and gave us no way to compute it. That is
-the price of nonconstructive existence, paid in code.
+Compare the two parts of this example. `isPerfect` and the
+filter that finds all perfect numbers up to 10000 are computable.
+`oddPerfectAnswer` on the other hand looks like a program but the
+constructive reading of `∃` would demand a witness that we do not
+have. Classical logic, with excluded middle (em), gave us the
+proposition "this question has an answer" one way or the other,
+for free, but gave us no way to compute it. That is the price of
+nonconstructive existence.
 
 One caution about what this example does and does not show. For
 this one fixed question, some constant program is correct: either
 "one exists" or "none exists" is the right answer, and we simply
-do not know which. So what failed here is *extraction*. The
-classical proof does not hand us a program, even though a correct
-program exists.
+do not know which. So what failed here is *extraction* of code
+from the proof. The classical proof does not hand us a program we
+can run.
 
 ### Another Example: The Halting Problem
 
@@ -527,34 +607,4 @@ computation ever succeeds, and that is the halting problem, which
 is known to be undecidable. So the absence of code behind `em` is
 not a gap in Lean's implementation that a better compiler might
 close. It is a theorem about computation.
-@@@ -/
-
-/- @@@
-### A Provocation: Banach–Tarski
-
-The Banach–Tarski theorem (1924) says that a solid ball in
-three-dimensional space can be partitioned into finitely many
-sets, then those sets moved by rotations and translations to
-form two disjoint balls, each the same size as the original.
-The usual proof uses the axiom of choice. The pieces cannot all
-have ordinary volume: nonmeasurable sets are involved. This is
-a theorem about sets of points, not a physical recipe for cutting
-up a ball and doubling its material.
-See [Banach and Tarski's original paper](https://pldml.icm.edu.pl/pldml/element/bwmeta1.element.bwnjournal-article-fmv6i1p27bwm)
-and [Terence Tao's explanation](https://www.math.ucla.edu/~tao/resource/general/121.1.00s/tarski.html).
-
-It vividly illustrates the constructive objection: what counts
-as evidence that these pieces exist if we cannot construct them
-in the required sense? A constructivist does not have to accept
-the classical proof as a constructive existence proof. The issue
-is the justification of existence, not merely that the conclusion
-is surprising. Excluded middle alone should not be confused with
-the choice principle used in the Banach–Tarski argument.
-
-Historically, this did not launch constructive mathematics:
-Brouwer's foundational work dates to 1907–1908, before this
-theorem. Use Banach–Tarski as an illustration of the demand for
-construction that motivated constructive approaches, rather than
-as their historical cause. Heyting later formalized intuitionistic
-(constructive) logic. See [the history of intuitionistic logic](https://plato.stanford.edu/entries/intuitionistic-logic-development/).
 @@@ -/
