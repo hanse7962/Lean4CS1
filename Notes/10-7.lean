@@ -189,9 +189,12 @@ inductive MyExists {α : Sort u} (p : α → Prop) : Prop where
   -- a dog x along with a proof Px
   -- Erases the witness in the process
 
+-- Ways to prove:
+-- - Existing case
 example : simpf :=
   fun pfs =>
-    _
+    ⟨Iris, Friendly.irisFriendly⟩
+    -- Ask how to prove just from the existing case
 
 
 -- "There exists a number n such that n + 1 = 4"
