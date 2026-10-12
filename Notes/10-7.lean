@@ -193,7 +193,7 @@ inductive MyExists {α : Sort u} (p : α → Prop) : Prop where
 -- - Existing case
 example : simpf :=
   fun pfs =>
-    ⟨Iris, Friendly.irisFriendly⟩
+  ⟨Iris, Friendly.irisFriendly⟩
     -- Ask how to prove just from the existing case
 
 
