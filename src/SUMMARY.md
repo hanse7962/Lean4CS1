@@ -63,6 +63,7 @@
 - [Negation and Predicates](./FPCourse/ClassNotes/E06_Negation.md)
 - [Existential Quantification](./FPCourse/ClassNotes/E07_Exists.md)
 - [More About Types](./FPCourse/ClassNotes/E08_MoreAboutTypes.md)
+- [Recursors](./FPCourse/ClassNotes/E09_induction.md)
 
 ---
 
