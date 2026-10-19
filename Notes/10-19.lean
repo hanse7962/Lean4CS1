@@ -236,4 +236,14 @@ def addAnything {α : Type} [Add α]: α → α → α
 -- Will not work, since there is no + operator for strings
 #eval addAnything "Hi" "Hello"
 
+/-
+Assume you are given object of any type that satisfies properties of group:
+  - Zero element, addition, associative, commutative, group is closed under addition, inverses
+
+Will take any type you give as long as it is a group/typeclass instance for that type
+
+Fields of a typeclass can also be proof objects
+  - Expect, going forward, that when you have group typeclass instance, it comes with
+    proof of the laws of being a group
+-/
 end KNat
