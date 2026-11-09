@@ -155,3 +155,10 @@ def triangle_B : Point2 := ⟨(3, 4)⟩
 
 -- Subtract points from one another
 def side_AB : Vector2 := triangle_B -ᵥ triangle_A -- (3, 0)
+
+
+-- Get the theory formalized and checked, then separately, build your implementations
+-- And separate from that (or with it), provide proof that implementation provides general laws
+
+-- Separate out general theory (may not be computable) of vector spaces over whatever, then
+-- separately, separate out general implementation
