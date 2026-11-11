@@ -65,9 +65,9 @@ class Group (α : Type) where
   invLeft : ∀ a, op (inv a) a = id
   invRight: ∀ a, op a (inv a) = id
 
-instance [Group α] : Add α where add := Group.op
-instance [Group α] : Neg α where neg := Group.inv
-instance [Group α] : Zero α where zero := Group.id
+instance {α : Type} [Group α] : Add α where add := Group.op
+instance {α : Type} [Group α] : Neg α where neg := Group.inv
+instance {α : Type} [Group α] : Zero α where zero := Group.id
 ```
 
 ## `AffineSpace`: A Torsor Structure
@@ -131,67 +131,161 @@ Freeness also changes character. In `Torsor` it is a separate axiom; here it
 is a consequence of `addVsub`, which says `vsub` inverts `vadd` and so forces
 the displacement between two points to be *unique*, not merely existent.
 
-The secondary benefit is the type separation: `vadd : V → P → P` keeps
-vectors and points apart, where `Torsor`'s `act : G → T → T` is usually
-instantiated with `G` and `T` the same type.
-## Instance 1: `Rat` × `Rat` (Rational Points in the Plane)
+What is *not* a difference is the separation of points from vectors. `Torsor`'s
+`act : G → T → T` already takes two distinct type parameters, and the last
+instance of the previous lesson used them -- `Torsor Vector2 Point2`. The
+signature `vadd : V → P → P` is the same shape. Keeping points and vectors
+apart is good practice in either class, and this file goes on doing it; it is
+just not what `AffineSpace` adds. What `AffineSpace` adds is `vsub`.
+## Instance 1: Points and Vectors in the Rational Plane
 
-The rational plane is an affine space over the vector space `Rat × Rat`.
-Points and displacement vectors are both pairs of rationals, but
-conceptually they play different roles: vectors represent displacements,
-points represent locations (with no special origin).
+The rational plane. Points are locations, vectors are displacements, and the
+two get *distinct types* -- `Point2` and `Vector2` -- even though both are
+implemented as a pair of rationals. A `structure` with a single field is how
+Lean says "same representation, different type", and it is what stops
+`p + q` for two points from typechecking.
 
-The translation operation is componentwise addition, and the subtraction
-operation subtracts coordinates to recover the displacement vector.
+These are the same two types introduced at the end of the torsors lesson. We
+redeclare them here because each lesson in this sequence stands alone.
+```lean
+structure Vector2 where
+  ofPair ::
+  toPair : Rat × Rat
+deriving DecidableEq
+
+structure Point2 where
+  ofPair ::
+  toPair : Rat × Rat
+deriving DecidableEq
+
+/- Print the underlying pair, tagged with the type it came from, so that the
+   `#eval`s below say which role each value is playing. -/
+instance : Repr Vector2 where reprPrec v _ := "Vector2 " ++ repr v.toPair
+instance : Repr Point2  where reprPrec p _ := "Point2 "  ++ repr p.toPair
+```
+
+First the group of pairs, which is where the componentwise arithmetic lives:
 ```lean
 instance : Group (Rat × Rat) where
   op      : Rat × Rat → Rat × Rat → Rat × Rat := fun (a, b) (c, d) => (a + c, b + d)
   id      : Rat × Rat := (0, 0)
-  assoc   : ∀ a b c : Rat × Rat, ((a.1 + b.1) + c.1, (a.2 + b.2) + c.2) = (a.1 + (b.1 + c.1), a.2 + (b.2 + c.2)) := fun _ _ _ => by simp [Rat.add_assoc]
-  idLeft  : ∀ a : Rat × Rat, (0 + a.1, 0 + a.2) = a := fun _ => by simp
-  idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a := fun _ => by simp
+  assoc   : ∀ a b c : Rat × Rat, ((a.1 + b.1) + c.1, (a.2 + b.2) + c.2) = (a.1 + (b.1 + c.1), a.2 + (b.2 + c.2)) :=
+    fun a b c => Prod.ext (Rat.add_assoc a.1 b.1 c.1) (Rat.add_assoc a.2 b.2 c.2)
+  idLeft  : ∀ a : Rat × Rat, (0 + a.1, 0 + a.2) = a :=
+    fun a => Prod.ext (Rat.zero_add a.1) (Rat.zero_add a.2)
+  idRight : ∀ a : Rat × Rat, (a.1 + 0, a.2 + 0) = a :=
+    fun a => Prod.ext (Rat.add_zero a.1) (Rat.add_zero a.2)
   inv     : Rat × Rat → Rat × Rat := fun (a, b) => (-a, -b)
-  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) := fun (a, b) => by ext <;> simp
-  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) := fun (a, b) => by ext <;> simp
+  invLeft : ∀ a : Rat × Rat, (-a.1 + a.1, -a.2 + a.2) = (0, 0) :=
+    fun a => Prod.ext (Rat.neg_add_cancel a.1) (Rat.neg_add_cancel a.2)
+  invRight: ∀ a : Rat × Rat, (a.1 + (-a.1), a.2 + (-a.2)) = (0, 0) :=
+    fun a => Prod.ext (Rat.add_neg_cancel a.1) (Rat.add_neg_cancel a.2)
+```
 
-instance : AffineSpace (Rat × Rat) (Rat × Rat) where
-  groupV  := inferInstance
-  vadd    : Rat × Rat → Rat × Rat → Rat × Rat := fun (v₁, v₂) (p₁, p₂) => (v₁ + p₁, v₂ + p₂)
-  vsub    : Rat × Rat → Rat × Rat → Rat × Rat := fun (q₁, q₂) (p₁, p₂) => (q₁ - p₁, q₂ - p₂)
-  -- v +ᵥ (w +ᵥ p) = (v + w) +ᵥ p, componentwise: v₁ + (w₁ + p₁) = (v₁ + w₁) + p₁
-  vaddAssoc := fun (v₁, v₂) (w₁, w₂) (p₁, p₂) => by
-    ext <;> simp [Group.op, Rat.add_assoc]
-  vaddZero := fun (p₁, p₂) => by
-    ext <;> simp [Group.id]
-  -- note the binder order: p first, then q, matching `∀ p q : P` in the class
-  vsubAdd := fun (p₁, p₂) (q₁, q₂) => by
-    ext <;> simp
-  addVsub := fun (v₁, v₂) (p₁, p₂) => by
-    ext <;> simp
+Now `Vector2` becomes a group by *transporting* that instance across the
+wrapper: each operation unwraps its arguments, defers to the pair instance,
+and wraps the result. Each law then follows from the corresponding law on
+pairs by `congrArg` -- "equal arguments give equal results" -- which lifts an
+equation on pairs to an equation on `Vector2`. No arithmetic is redone.
+```lean
+instance : Group Vector2 where
+  op v w :    Vector2      := ⟨Group.op v.toPair w.toPair⟩
+  id :        Vector2         := ⟨Group.id⟩
+  inv v :     Vector2       := ⟨Group.inv v.toPair⟩
+  assoc a b c := congrArg Vector2.ofPair (Group.assoc a.toPair b.toPair c.toPair)
+  idLeft a    := congrArg Vector2.ofPair (Group.idLeft a.toPair)
+  idRight a   := congrArg Vector2.ofPair (Group.idRight a.toPair)
+  invLeft a   := congrArg Vector2.ofPair (Group.invLeft a.toPair)
+  invRight a  := congrArg Vector2.ofPair (Group.invRight a.toPair)
+
+
+#check congrArg
+```
+
+congrArg.{u, v}
+  {α : Sort u}
+  {β : Sort v}
+  {a₁ a₂ : α}
+  (f : α → β)
+  (h : a₁ = a₂) :
+  f a₁ = f a₂
+And the affine space itself. Read the two operation types carefully, because
+they are the whole design:
+
+  `vadd : Vector2 → Point2 → Point2`   a displacement moves a point
+  `vsub : Point2 → Point2 → Vector2`   two points determine a displacement
+
+`vsub` is defined as "compose with the inverse": the displacement from `p` to
+`q` is `q` combined with the undoing of `p`. For ℚ² that computes exactly the
+componentwise difference, but writing it group-theoretically makes all four
+proofs one-liners, since each is just associativity and the inverse laws.
+Two cancellation facts about any group, proved once so that the last two
+affine laws become single terms. Each is a `calc` chain whose every step
+names the axiom it uses -- associativity, then an inverse law, then the
+identity law.
+```lean
+theorem op_inv_op_cancel {α : Type} [Group α] (a b : α) :
+    Group.op (Group.op a (Group.inv b)) b = a :=
+  calc Group.op (Group.op a (Group.inv b)) b
+      = Group.op a (Group.op (Group.inv b) b) := Group.assoc a (Group.inv b) b
+    _ = Group.op a Group.id                   := congrArg (Group.op a) (Group.invLeft b)
+    _ = a                                     := Group.idRight a
+
+theorem op_op_inv_cancel {α : Type} [Group α] (a b : α) :
+    Group.op (Group.op a b) (Group.inv b) = a :=
+  calc Group.op (Group.op a b) (Group.inv b)
+      = Group.op a (Group.op b (Group.inv b)) := Group.assoc a b (Group.inv b)
+    _ = Group.op a Group.id                   := congrArg (Group.op a) (Group.invRight b)
+    _ = a                                     := Group.idRight a
+
+instance : AffineSpace Vector2 Point2 where
+  groupV    := inferInstance
+  vadd v p  := ⟨Group.op v.toPair p.toPair⟩
+  vsub q p  := ⟨Group.op q.toPair (Group.inv p.toPair)⟩
+  -- v +ᵥ (w +ᵥ p) = (v + w) +ᵥ p is associativity on pairs, read right to left
+  vaddAssoc v w p :=
+    congrArg Point2.ofPair (Group.assoc v.toPair w.toPair p.toPair).symm
+  -- 0 +ᵥ p = p is the left identity law
+  vaddZero p := congrArg Point2.ofPair (Group.idLeft p.toPair)
+  -- (q -ᵥ p) +ᵥ p = q: the `inv p` cancels against the `p`
+  vsubAdd p q := congrArg Point2.ofPair (op_inv_op_cancel q.toPair p.toPair)
+  -- (v +ᵥ p) -ᵥ p = v: the same cancellation, one step further along
+  addVsub v p := congrArg Vector2.ofPair (op_op_inv_cancel v.toPair p.toPair)
 ```
 
 This instance encodes a fundamental truth: the rational plane has no
 distinguished origin. We can pick any point as a reference, and describe
 all others relative to it via vectors. The structure guarantees that the
-two directions of translation (point + vector, point - point) are inverses.
-```lean
-/- With the VAdd instance, we can now write `v +ᵥ p` for translation.
-   Example: translating point (2, 3) by vector (1, -1) gives (3, 2).
--/
-```
+two directions of translation (`+ᵥ` and `-ᵥ`) are inverses.
 
-## Instance 2: Decidable Equality Points Over ℚ Vectors
+It also buys the type safety the previous lesson was reaching for. All of
+these are errors rather than meaningless values:
 
-For a general decidable equality type `P` (the points), we can construct
-an affine space where the vectors are `Rat` and the action is addition
-of a rational scalar to... well, we'd need `P` to be a `Rat`-module, which
-requires more structure. Instead, let's construct an affine space where
-both `P` and `V` are the same type with decidable equality, and the action
-is a free group action via an embedding `f : V → P → P`.
+  `Group.op (Point2.ofPair (1, 1)) (Point2.ofPair (2, 2))`
+      -- no `Group Point2` instance: points do not add
+  `AffineSpace.vadd (Point2.ofPair (1, 1)) (Point2.ofPair (2, 2))`
+      -- `vadd` takes a vector first, and a point is not a vector
+  `AffineSpace.vsub (Vector2.ofPair (1, 1)) (Vector2.ofPair (2, 2))`
+      -- `vsub` differences two *points*
 
-Actually, the cleanest general instance: treat `P` itself as a `Rat`
-vector space (which we'll formalize next class), and then the affine
-space is just `P` acting on itself.
+Lean reports each as a failure to synthesize the instance that would be
+needed for the expression to mean anything -- the type checker saying,
+correctly, that there is no such operation.
+## A Second Instance? Where the Missing Structure Shows Up
+
+It is natural to want another instance, and the obvious candidate is
+instructive precisely because it fails. Take any type `P` with decidable
+equality as the points, and let the vectors be `Rat`. Now write `vadd`: what
+does it mean to displace an arbitrary `p : P` by the rational `3`? Nothing
+about `P` answers that. Supplying an answer *is* supplying `P` with a
+ℚ-vector-space structure, which is the structure the next lesson adds. There
+is no shortcut around it.
+
+The other tempting move is to let a type act on itself -- `AffineSpace V V`,
+the shape the first two torsor instances had. The axioms are satisfiable, so
+it is a genuine affine space, and the vector space lesson will build exactly
+that for ℚ. But it collapses points into vectors, which costs the type safety
+demonstrated above. Worth doing deliberately; not worth doing by accident.
 ## Properties of Affine Spaces
 
 Once we have an affine space, we can derive useful facts. For instance,
@@ -230,19 +324,22 @@ The key is that all operations are coordinate-free and don't require choosing
 an origin.
 ### Example 1: A Triangle in the Rational Plane
 
-Define three vertices of a triangle:
+Define three vertices of a triangle. These are `Point2`s -- locations, not
+displacements:
 ```lean
-def triangle_A : Rat × Rat := (1, 2)
-def triangle_B : Rat × Rat := (4, 2)
-def triangle_C : Rat × Rat := (2, 5)
+def triangle_A : Point2 := ⟨(1, 2)⟩
+def triangle_B : Point2 := ⟨(4, 2)⟩
+def triangle_C : Point2 := ⟨(2, 5)⟩
 ```
 
-Compute the vectors forming the sides of the triangle.
-Note: we use the `-ᵥ` operator to compute displacements.
+The sides are `Vector2`s: displacements between the vertices, computed with
+the `-ᵥ` operator. Note that the types are not a matter of our labelling --
+`vsub` *returns* a `Vector2`, so these definitions could not be annotated
+`Point2` even if we tried.
 ```lean
-def side_AB : Rat × Rat := triangle_B -ᵥ triangle_A  -- (3, 0)
-def side_BC : Rat × Rat := triangle_C -ᵥ triangle_B  -- (-2, 3)
-def side_CA : Rat × Rat := triangle_A -ᵥ triangle_C  -- (-1, -3)
+def side_AB : Vector2 := triangle_B -ᵥ triangle_A  -- (3, 0)
+def side_BC : Vector2 := triangle_C -ᵥ triangle_B  -- (-2, 3)
+def side_CA : Vector2 := triangle_A -ᵥ triangle_C  -- (-1, -3)
 ```
 
 Verify the closure property: going around the triangle brings you back home.
@@ -252,12 +349,12 @@ Displacements compose with the *group* operation on `V` -- that is the whole
 point of requiring `V` to be a group, so we use `Group.op` rather than
 re-deriving componentwise addition by hand.
 ```lean
-def close_the_loop : Rat × Rat := Group.op (Group.op side_AB side_BC) side_CA
+def close_the_loop : Vector2 := Group.op (Group.op side_AB side_BC) side_CA
 
-#eval side_AB         -- (3, 0)
-#eval side_BC         -- (-2, 3)
-#eval side_CA         -- (-1, -3)
-#eval close_the_loop  -- (0, 0): AB + BC + CA = 0, the loop closes
+#eval side_AB         -- Vector2 (3, 0)
+#eval side_BC         -- Vector2 (-2, 3)
+#eval side_CA         -- Vector2 (-1, -3)
+#eval close_the_loop  -- Vector2 (0, 0): AB + BC + CA = 0, the loop closes
 ```
 
 ### Example 2: Translation and Reconstruction
@@ -265,32 +362,31 @@ def close_the_loop : Rat × Rat := Group.op (Group.op side_AB side_BC) side_CA
 Translate a point by a vector, then recover the original vector from the
 difference.
 ```lean
-def point_P : Rat × Rat := (0, 0)
-def vector_v : Rat × Rat := (3, 4)
+def point_P : Point2 := ⟨(0, 0)⟩
+def vector_v : Vector2 := ⟨(3, 4)⟩
 ```
 
-Here we must write `AffineSpace.vadd` rather than the `+ᵥ` notation, and the
-reason is instructive. We have chosen `V` and `P` to be the *same* type,
-`ℚ × ℚ`. But mathlib already knows `ℚ × ℚ` is an additive monoid acting on
-itself, so it already has a `+ᵥ` for this pair of types. Our notation and
-mathlib's are both in scope and both apply, so `vector_v +ᵥ point_P` is
-genuinely ambiguous and Lean refuses to guess.
+Here the `+ᵥ` notation simply works, and it is worth knowing why, because
+with the wrong types it would not. Mathlib defines its own `+ᵥ`, and both
+notations are in scope in this file. When points and vectors are the *same*
+type -- say both `ℚ × ℚ` -- mathlib's instance for an additive monoid acting
+on itself applies alongside ours, and `vector_v +ᵥ point_P` is genuinely
+ambiguous: Lean reports an overloaded notation and refuses to guess.
 
-This is not a notational annoyance -- it is the type system telling us
-something true. Modelling points and vectors as the same type throws away the
-distinction the whole lesson is about. The fix is not to fight the ambiguity
-but to give points and vectors *different* types, which is exactly what the
-ℚ² demo does. There, `+ᵥ` is unambiguous because only one instance applies.
+With `Vector2` and `Point2` as distinct types of our own, mathlib has no
+instance for them, so exactly one of the two readings elaborates and the
+ambiguity disappears. The notation working is thus a small piece of evidence
+that the types are now carrying the distinction the lesson is about.
 ```lean
-def translated_point : Rat × Rat := AffineSpace.vadd vector_v point_P
+def translated_point : Point2 := vector_v +ᵥ point_P
 ```
 
 Now recover the original vector by taking the difference:
 ```lean
-def recovered_vector : Rat × Rat := translated_point -ᵥ point_P
+def recovered_vector : Vector2 := translated_point -ᵥ point_P
 
-#eval translated_point                  -- (3, 4)
-#eval recovered_vector                  -- (3, 4)
+#eval translated_point                  -- Point2 (3, 4)
+#eval recovered_vector                  -- Vector2 (3, 4)
 #eval recovered_vector = vector_v       -- true
 ```
 
@@ -298,9 +394,23 @@ That last line is the `addVsub` axiom showing up as a computation rather than
 a claim: `(v +ᵥ p) -ᵥ p = v`. Since we have actually *proven* `addVsub` for
 this instance, the equality is guaranteed for every `v` and `p`, not just the
 one pair we happened to evaluate.
+
+Both operators work inside the statement below, too:
 ```lean
-example : (AffineSpace.vadd vector_v point_P) -ᵥ point_P = vector_v :=
+example : (vector_v +ᵥ point_P) -ᵥ point_P = vector_v :=
   AffineSpace.addVsub vector_v point_P
+```
+
+One residual wrinkle, worth stating precisely rather than leaving as folklore.
+In `vsub : P → P → V` the vector type `V` appears only in the *result*, so the
+arguments alone do not determine it. Wherever there is a result type to guide
+elaboration -- a `def`'s type annotation, or the right-hand side of the `=`
+above -- `-ᵥ` resolves fine. Where there is none, as in a nested position
+like `(q -ᵥ p) +ᵥ p` stated for arbitrary points, the overloaded notation is
+ambiguous and needs a nudge:
+```lean
+example (p q : Point2) : (q -ᵥ p : Vector2) +ᵥ p = q :=
+  AffineSpace.vsubAdd p q
 ```
 
 ### Example 3: Geometric Relationships Without an Origin
@@ -308,27 +418,28 @@ example : (AffineSpace.vadd vector_v point_P) -ᵥ point_P = vector_v :=
 Consider a line defined by two points. We can describe all points on the line
 using just the affine structure — no special origin needed.
 ```lean
-def line_point_1 : Rat × Rat := (1, 1)
-def line_point_2 : Rat × Rat := (2, 3)
+def line_point_1 : Point2 := ⟨(1, 1)⟩
+def line_point_2 : Point2 := ⟨(2, 3)⟩
 
-def direction : Rat × Rat := line_point_2 -ᵥ line_point_1  -- (1, 2)
+def direction : Vector2 := line_point_2 -ᵥ line_point_1  -- (1, 2)
 ```
 
 A point at t=2 along this line (2 times the direction vector from point_1):
 ```lean
-def point_on_line_t2 : Rat × Rat :=
-  AffineSpace.vadd (2 * direction.1, 2 * direction.2) line_point_1
+def point_on_line_t2 : Point2 :=
+  (Vector2.ofPair (2 * direction.toPair.1, 2 * direction.toPair.2)) +ᵥ line_point_1
 
-#eval direction         -- (1, 2)
-#eval point_on_line_t2  -- (3, 5)
+#eval direction         -- Vector2 (1, 2)
+#eval point_on_line_t2  -- Point2 (3, 5)
 ```
 
-Note what we had to do to scale the direction vector: we reached into the
-components and multiplied. That is *not* an affine operation. An affine space
-gives us a group of displacements, and a group only lets us compose and invert
-them -- it has no notion of "twice this vector." Scaling needs `V` to carry
-scalar multiplication, i.e. to be a vector space, which is the structure the
-next lesson adds. The affine axioms alone cannot parametrize a line.
+Note what we had to do to scale the direction vector: we unwrapped it, reached
+into the components, multiplied, and wrapped it back up. That is *not* an
+affine operation. An affine space gives us a group of displacements, and a
+group only lets us compose and invert them -- it has no notion of "twice this
+vector." Scaling needs `V` to carry scalar multiplication, i.e. to be a vector
+space, which is the structure the next lesson adds. The affine axioms alone
+cannot parametrize a line.
 The affine space structure lets us:
   - Define geometric objects (lines, triangles) by their points
   - Compute displacements between points without a global coordinate system
