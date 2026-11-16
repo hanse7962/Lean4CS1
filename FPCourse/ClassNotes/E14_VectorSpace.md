@@ -12,7 +12,7 @@ Formally, a vector space `V` over a field `F` is:
 
 Vector spaces are the lingua franca of classical physics and linear algebra. However, this universality comes at a conceptual cost: they conflate two fundamentally different geometric objects—**points** (locations) and **vectors** (displacements)—into a single type.
 
-This is a pragmatic trade-off: we gain computational convenience and algebraic closure, but we lose conceptual clarity. The more honest geometric foundation is the **affine space** (see E14_AffineSpace.md), which preserves the type distinction.
+This is a pragmatic trade-off: we gain computational convenience and algebraic closure, but we lose conceptual clarity. The more honest geometric foundation is the **affine space** (see E13_AffineSpace.md), which preserves the type distinction.
 
 ### How Vector Spaces Differ From Affine Spaces
 
@@ -515,7 +515,7 @@ Infinite-dimensional vector spaces with analysis (limits, continuity) built in. 
 
 ## Vector Spaces in the Lean Formalization
 
-The `VectorSpace` typeclass in E15_VectorSpace.lean reflects the choice to collapse distinctions:
+The `VectorSpace` typeclass in E14_VectorSpace.lean reflects the choice to collapse distinctions:
 
 ```lean
 class VectorSpace (F V : Type) ... where

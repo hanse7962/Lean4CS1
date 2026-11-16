@@ -23,7 +23,7 @@ namespace GeneralizedFold
 ## Recap: `Monoid`, Bundled and Proved
 
 Same class as last time, restated so this file stands on its
-own. See `E11_abstractAlgebra.lean` if any of this is unfamiliar --
+own. See `E09_abstractAlgebra.lean` if any of this is unfamiliar --
 `op`/`id` and the two laws that make folding with them safe.
 ```lean
 class Monoid (α : Type) where
@@ -111,6 +111,8 @@ inductive Option (α : Type) where
 zero -- so a safe `pred` hands back `none` there instead of lying
 and calling it zero again:
 ```lean
+#check (Option)
+
 def pred : Nat → Option Nat
 | Nat.zero   => none
 | Nat.succ n => some n
@@ -324,7 +326,7 @@ def increment {F : Type → Type} [LawfulMap F] (xs : F Nat) : F Nat :=
 #eval increment [1, 2, 3]            -- [2, 3, 4]
 #eval increment (some 5)             -- some 6
 #eval increment (none : Option Nat)  -- none
-#eval increment sampleTree            -- Tree with 2, 3, 4
+#eval toList (LawfulMap.map (· + 1) sampleTree)  -- [2, 3, 4]
 ```
 
 ## EXERCISES
@@ -369,7 +371,6 @@ def increment {F : Type → Type} [LawfulMap F] (xs : F Nat) : F Nat :=
    than *how to combine into one value*. Look up `ForIn` and
    write a one-paragraph comparison: what does `Foldable.foldr`
    buy you that `ForIn`'s `forIn` doesn't, and vice versa?
-
 ## ANSWERS
 
 ### Exercise 1: `Array` as `Foldable`
@@ -381,14 +382,13 @@ point the `Foldable` instance at that existing function.
 which has exactly the right shape. This is the easiest instance
 to write because we're literally just delegating to something
 that already exists.
-
 ```lean
 instance : Foldable Array where
   foldr := Array.foldr
 
-#eval size (#[1, 2, 3, 4] : Array Nat)            -- 4
-#eval toList (#[5, 6] : Array Nat)                -- [5, 6]
-#eval fold (α := Nat) (#[2, 3, 4] : Array Nat)   -- 9
+#eval size (#[1, 2, 3, 4] : Array Nat)    -- 4
+#eval toList (#[5, 6] : Array Nat)        -- [5, 6]
+#eval fold (#[2, 3, 4] : Array Nat)       -- 9
 ```
 
 Notice that `size`, `toList`, and `fold` work unchanged. That's
@@ -402,7 +402,6 @@ We can define `sum` directly from `Foldable.foldr` without
 reaching for `Monoid` at all. All we need is to pass `+` as the
 combining step and `0` as the base case -- the same choice that
 the `Monoid Nat` instance makes for `op` and `id`.
-
 ```lean
 def sum {F : Type → Type} [Foldable F] (xs : F Nat) : Nat :=
   Foldable.foldr (· + ·) 0 xs
@@ -424,7 +423,6 @@ we can't make it also mean `*` and `1` via a second instance
 (typeclass resolution needs one answer per type). Instead,
 we'll build a `Monoid Nat` *value*, and pass its `op`/`id`
 fields directly to `Foldable.foldr`.
-
 ```lean
 @[instance_reducible]
 def natMulMonoid : Monoid Nat where
@@ -465,7 +463,6 @@ For `all`, we're checking that *every* element satisfies the
 predicate. Start from `true` (no violations yet), and flip to
 `false` if we find even one element where `p x` is false.
 Logically, combining is AND: `(p x) && accumulator`.
-
 ```lean
 def any {F : Type → Type} [Foldable F] {α : Type} (p : α → Bool) (xs : F α) : Bool :=
   Foldable.foldr (fun x acc => p x || acc) false xs
@@ -501,12 +498,26 @@ you reach a `node`, visit the value *first*, then the left subtree,
 then the right subtree. Because a type can only have one canonical
 `Foldable` instance, and we want to show that *different orders
 are possible*, we need a separate type.
-
 ```lean
 inductive PreTree (α : Type) where
 | leaf
 | node (v : α) (l : PreTree α) (r : PreTree α)
+```
 
+Notice we rearranged the fields in the `node` constructor:
+`v : α` comes before the subtrees, matching the pre-order
+traversal (visit value first). This isn't strictly necessary
+for the instance to work, but it makes the structure self-documenting.
+
+For pre-order folding, the key insight is: we want the combining
+function to see elements in pre-order (value first, then left,
+then right). In `foldr` terms, that means:
+  `f v (foldr-left-subtree (foldr-right-subtree z))`
+
+This threads the value through as the first element, then folds
+the left subtree into that result, then folds the right subtree
+into the left's result.
+```lean
 def preTreeFoldr {α β : Type} (f : α → β → β) (z : β) : PreTree α → β
 | PreTree.leaf => z
 | PreTree.node v l r => f v (preTreeFoldr f (preTreeFoldr f z r) l)
@@ -546,14 +557,12 @@ exceptions) through the iteration, and the goal is often *not* to
 produce a final value but just to perform those effects in order.
 
 For example, with `Foldable`, you combine values into one result:
-
 ```lean
-#eval fold (α := Nat) sampleTree  -- one number: 6
+#eval fold sampleTree  -- one number: 6
 ```
 
 With `ForIn`, you perform side effects for each element (on a `List`,
 which has a `ForIn` instance):
-
 ```lean
 def printList (xs : List Nat) : IO Unit := do
   for x in xs do
@@ -576,7 +585,6 @@ implement `ForIn` using `Foldable` (fold over each element,
 performing the effect), but `forIn` is often backed by different
 recursion that's optimized for side effects, while `foldr` is
 optimized for pure functional composition.
-
 ```lean
 end GeneralizedFold
 ```

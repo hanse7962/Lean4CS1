@@ -1,3 +1,4 @@
+/- @@@
 
 # Notes 9/21/26
 
@@ -15,7 +16,8 @@
   - -> Empty and -> False (Not!)
 
 
-```lean
+@@@ -/
+
 def e2e : Empty → Empty
 | e => e
 
@@ -75,8 +77,8 @@ rfl
 example{P : Prop} : ¬(P ∧ ¬P) :=
   fun (pnp : P ∧ ¬P) =>
     pnp.right pnp.left
-```
 
+/- @@@
 ## Predicates
 
 Every proposition so far has been a fixed claim: `KevinIsFromCville`,
@@ -99,44 +101,49 @@ Note the types reported by `#check`. For a definition Lean prints
 the signature, `IsZero (n : Nat) : Prop`; the `@` form shows the
 same thing as a function type, `Nat → Prop`. Each *application*
 of the predicate is a `Prop`.
-```lean
+@@@ -/
+
 def IsZero (n : Nat) : Prop := n = 0
 
 #check IsZero         -- IsZero (n : Nat) : Prop
 #check @IsZero        -- Nat → Prop, a predicate
 #check IsZero 0       -- Prop, a proposition
 #check IsZero 1       -- Prop, also a proposition
-```
 
+/- @@@
 `IsZero 0` unfolds to `0 = 0`, which `rfl` proves. `IsZero 1`
 unfolds to `1 = 0`, a perfectly well formed proposition that
 happens to be false, so we can prove its negation instead. Being
 a predicate application says nothing about being true.
-```lean
+@@@ -/
+
 example : IsZero 0 := rfl
 example : ¬IsZero 1 := fun h => Nat.one_ne_zero h
-```
 
+/- @@@
 Predicates do not have to be named. A function literal from values
 to propositions is a predicate too.
-```lean
-#check fun n : Nat => n > 3
-```
+@@@ -/
 
+#check fun n : Nat => n > 3
+
+/- @@@
 A predicate may take extra parameters before the value it is
 about. Here `Between lo hi` is a predicate on `Nat` for each
 choice of bounds, built from the connectives we already know.
-```lean
+@@@ -/
+
 def Between (lo hi n : Nat) : Prop := lo ≤ n ∧ n ≤ hi
 
 example : Between 0 10 4 := And.intro (Nat.zero_le 4) (Nat.le_add_left 4 6)
-```
 
+/- @@@
 A predicate of two arguments, `α → α → Prop`, is what we usually
 call a *relation*: it asserts that a property holds *of a pair*.
 Equality and ≤ on `Nat` are exactly this, and the second is defined
 inductively, which is how such predicates are often given.
-```lean
+@@@ -/
+
 #check @Eq             -- {α : Sort u_1} → α → α → Prop
 #check @Nat.le         -- Nat → Nat → Prop
 
@@ -146,8 +153,8 @@ def Divides (d n : Nat) : Prop := n % d = 0
 
 example : Divides 3 9 := rfl
 example : ¬Divides 3 10 := fun h => nomatch h
-```
 
+/- @@@
 One distinction is worth stressing, because Lean maintains it
 carefully. A predicate returns a `Prop`, a *proposition* whose
 proofs are evidence. A function returning `Bool` returns *data*,
@@ -156,18 +163,23 @@ the result of a *computation*. `isZeroBool 1` evaluates to `false`;
 refute. Propositions are what we reason about; Booleans are what
 we compute with. Connecting the two, deciding a proposition by
 running a Boolean test, is the topic of decidability.
-```lean
+@@@ -/
+
 def isZeroBool (n : Nat) : Bool := n == 0
 
 #check @isZeroBool     -- Nat → Bool, a decision procedure
 #eval isZeroBool 1     -- false, a computed value
-```
 
+/- @@@
 Predicates are what the quantifiers quantify over. `∀ x : α, P x`
 says every value of α satisfies the predicate P, and `∃ x : α, P x`
 says at least one does. Having predicates in hand, we take up the
-second of these in `E07_Exists.lean`.
-```lean
+second of these in `E05_Exists.lean`.
+@@@ -/
+
+/- @@@
+@@@ -/
+
 example
   (em : ∀ (X : Prop),  X ∨ ¬X) :
   ¬(P ∧ Q) → ¬P ∨ ¬Q :=
@@ -178,8 +190,3 @@ example
       | Or.inl q =>  False.elim (npandq (And.intro p q))
       | Or.inr nq => Or.inr nq
     | Or.inr np => Or.inl np
-```
-
-
-<div class="issue-box">📝 <a href="https://github.com/kevinsullivan/Lean4CS1/issues/new">Report an issue</a> with this section</div>
-

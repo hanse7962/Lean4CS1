@@ -253,7 +253,7 @@ existing program code. Rather, using `em` adds a logical capability
 without adding an executable implementation of that capability.
 
 For a worked example of what this costs in practice, see the odd
-perfect number question in `E07_Exists.lean`, where a one-line
+perfect number question in `E05_Exists.lean`, where a one-line
 classical proof settles that an existential has an answer and
 still leaves us with no code to compute it.
 @@@ -/

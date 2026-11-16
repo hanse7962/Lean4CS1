@@ -68,8 +68,9 @@ class AffineSpaceTheory (V : Type) (P : Type) where
 class VAdd (V : Type) (P : Type) where vadd : V → P → P
 class VSub (P : Type) (V : Type) where vsub : P → P → V
 
-instance [AffineSpaceTheory V P] : VAdd V P where vadd := AffineSpaceTheory.vadd
-instance [AffineSpaceTheory V P] : VSub P V where vsub := AffineSpaceTheory.vsub
+instance {V P}[AffineSpaceTheory V P] : VAdd V P where vadd := AffineSpaceTheory.vadd
+instance {V P} [AffineSpaceTheory V P] : VAdd V P where vadd := AffineSpaceTheory.vadd
+instance {V P} [AffineSpaceTheory V P] : VSub P V where vsub := AffineSpaceTheory.vsub
 
 -- Both at precedence 65, matching mathlib. `-ᵥ` must bind tighter than `=`
 -- (precedence 50), or a goal like `q -ᵥ p = v` fails to parse.

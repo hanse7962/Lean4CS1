@@ -191,7 +191,7 @@ These capture geometric substructures while preserving the absence of a canonica
 
 ## Affine Spaces in the Lean Formalization
 
-The `AffineSpace` typeclass in E14_AffineSpace.lean enforces the type distinction:
+The `AffineSpace` typeclass in E13_AffineSpace.lean enforces the type distinction:
 
 ```lean
 class AffineSpace (V : Type) (P : Type) where
@@ -205,7 +205,7 @@ class AffineSpace (V : Type) (P : Type) where
 - You cannot accidentally write `p + p` (addition not defined on points)
 - The distinction between points and vectors is *enforced by the compiler*
 
-Contrast this with the vector space formalization in E15_VectorSpace.lean:
+Contrast this with the vector space formalization in E14_VectorSpace.lean:
 
 ```lean
 class VectorSpace (F V : Type) ... where

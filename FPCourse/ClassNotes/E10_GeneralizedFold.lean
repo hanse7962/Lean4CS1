@@ -25,7 +25,7 @@ namespace GeneralizedFold
 ## Recap: `Monoid`, Bundled and Proved
 
 Same class as last time, restated so this file stands on its
-own. See `E11_abstractAlgebra.lean` if any of this is unfamiliar --
+own. See `E09_abstractAlgebra.lean` if any of this is unfamiliar --
 `op`/`id` and the two laws that make folding with them safe.
 @@@ -/
 

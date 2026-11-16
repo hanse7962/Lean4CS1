@@ -1,7 +1,7 @@
 /- @@@
 # Affine Space ℚ² Demo: Type-Safe Geometry
 
-This demo uses the AffineSpace typeclass from E14_AffineSpace to work with
+This demo uses the AffineSpace typeclass from E13_AffineSpace to work with
 the rational plane (ℚ²). The key insight: **points and vectors are kept
 distinct by the type system**.
 
@@ -18,7 +18,7 @@ the right. `p +ᵥ v` is not merely unconventional, it does not typecheck --
 This is what affine spaces are for: geometry without a chosen origin.
 @@@ -/
 
-import FPCourse.ClassNotes.E14_AffineSpace
+import FPCourse.ClassNotes.E13_AffineSpace
 import Mathlib.Tactic.Ring
 
 namespace AffineSpace2DDemo
