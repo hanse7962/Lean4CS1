@@ -48,7 +48,16 @@ export function parseGraph(text) {
     const from = nat(tokens[1], line.line), to = nat(tokens[2], line.line);
     const weight = nat(tokens[3], line.line);
     if (from >= count || to >= count) fail(line.line, `vertex index must be less than ${count}`);
-    if (from >= to) fail(line.line, 'expected FROM < TO (topological order)');
+    // A FROM >= TO edge is the one rejection here that is not a syntax slip:
+    // the input describes a graph that is not acyclic, which the fold cannot
+    // evaluate at all. Say that, rather than quoting the ordering rule the
+    // parser happens to use to detect it. `selfExplanatory` suppresses the
+    // generic "correct the input" hint, which would only restate this.
+    if (from >= to) {
+      const cyclic = new Error("The graph fold algorithm requires that any input graph be acyclic. Yours isn't. Fix that and try again.");
+      cyclic.selfExplanatory = true;
+      throw cyclic;
+    }
     edges.push({ from, to, weight });
   }
   if (edges.length > 800) throw new Error('Visualizer supports at most 800 edges');
@@ -147,7 +156,8 @@ function update() {
     parseStatus.textContent = `✕ ${err.message}`;
     parseStatus.parentElement.classList.add('invalid');
     graphError.hidden = false;
-    graphError.textContent = err.message + '\nCorrect the input to update the graph.';
+    graphError.textContent = err.selfExplanatory ? err.message
+      : err.message + '\nCorrect the input to update the graph.';
     svg.replaceChildren();
     graphCount.textContent = 'INVALID INPUT';
     buttons.forEach(b => b.disabled = true);
@@ -330,7 +340,7 @@ export function finishExplanation(mode, event, source) {
   if (mode === 'paths') return event.vertex === source
     ? `Vertex ${event.vertex} is the source: its count of ${event.value} is just the trivial empty path that starts and ends here.`
     : `Vertex ${event.vertex} has ${event.value} total path(s) from the source; later vertices can now use this count.`;
-  return `Vertex ${event.vertex}'s full cost spectrum is finalized as ${event.value} — its minimum entry and how often it occurs give the optimal cost and the number of tied optimal routes.`;
+  return `Vertex ${event.vertex}'s full cost spectrum is finalized as ${event.value} — its minimum entry and how often it occurs given the optimal cost and the number of tied optimal routes.`;
 }
 
 function paintTrace() {

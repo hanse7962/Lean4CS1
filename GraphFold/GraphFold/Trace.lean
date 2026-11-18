@@ -20,7 +20,7 @@ inductive Event where
   | finish (vertex : Nat) (value : String)
   deriving Repr
 
-/-- Encode one event for the local Node server. -/
+/-- Encode one event for the local web server. -/
 def encode : Event → String
   | .start vertex base => s!"start|{vertex}|{base}"
   | .edge vertex predecessor weight prior contribution before after =>

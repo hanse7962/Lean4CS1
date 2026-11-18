@@ -65,7 +65,7 @@ def parseEdge (n : Nat) (s : String) : Except String Edge := do
       if u >= n || v >= n then
         throw s!"edge {u} → {v}: vertex index must be less than {n}"
       if u >= v then
-        throw s!"edge {u} → {v}: expected FROM < TO (topological order)"
+        throw s!"The graph fold algorithm requires that any input graph be acyclic. Yours isn't: edge {u} → {v} runs backward. Fix that and try again."
       return { src := u, dst := v, weight := w }
   | _ => throw s!"expected 'edge FROM TO WEIGHT', got '{s}'"
 

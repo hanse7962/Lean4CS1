@@ -54,7 +54,7 @@ with sync_playwright() as p:
     page.screenshot(path=str(root.parent.parent / 'animation-tablet.png'), full_page=True)
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
     page.locator('#graph-text').fill('vertices 2\nsource 0\nedge 1 0 3')
-    assert 'expected FROM < TO' in page.locator('#parse-status').inner_text()
+    assert 'acyclic' in page.locator('#parse-status').inner_text()
     assert page.locator('#trace-next').is_disabled()
     assert not errors, errors
     print('Chromium UI smoke passed: live graph, trace auto-load, stepping, highlighting, timed play, pause, resize, invalidation.')
